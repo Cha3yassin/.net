@@ -1,0 +1,6 @@
+@TP6_WebApi_HostAddress = http://localhost:5182
+
+GET {{TP6_WebApi_HostAddress}}/api/Compte
+Accept: application/json
+
+###

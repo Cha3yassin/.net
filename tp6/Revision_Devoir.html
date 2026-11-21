@@ -1,0 +1,1827 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Révision Devoir TP6</title>
+<style>
+:root{
+  --bg:#f6f7fb; --panel:#ffffff; --panel2:#f0f2f8; --text:#1d2233; --muted:#5d6479; --border:#dfe3ee;
+  --accent:#4f46e5; --accent-soft:#eceafd; --ok:#15803d; --ok-soft:#e5f6ea; --bad:#b91c1c; --bad-soft:#fdeaea;
+  --warn:#b45309; --warn-soft:#fdf3e1; --key:#0e7490; --key-soft:#e2f5f8;
+  --code-bg:#1e2130; --code-text:#e6e9f2; --shadow:0 1px 2px rgba(20,24,40,.06),0 4px 16px rgba(20,24,40,.06);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#11131a; --panel:#191c26; --panel2:#20242f; --text:#e7e9f0; --muted:#9aa1b5; --border:#2c3140;
+    --accent:#8b83ff; --accent-soft:#25234a; --ok:#4ade80; --ok-soft:#14301f; --bad:#f87171; --bad-soft:#3a1a1a;
+    --warn:#fbbf24; --warn-soft:#352a12; --key:#5fd3e6; --key-soft:#123038;
+    --code-bg:#0d0f15; --code-text:#e6e9f2; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#11131a; --panel:#191c26; --panel2:#20242f; --text:#e7e9f0; --muted:#9aa1b5; --border:#2c3140;
+  --accent:#8b83ff; --accent-soft:#25234a; --ok:#4ade80; --ok-soft:#14301f; --bad:#f87171; --bad-soft:#3a1a1a;
+  --warn:#fbbf24; --warn-soft:#352a12; --key:#5fd3e6; --key-soft:#123038;
+  --code-bg:#0d0f15; --code-text:#e6e9f2; --shadow:none;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+body{background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+code,pre,textarea,.blank{font-family:ui-monospace,"Cascadia Code",Consolas,"Courier New",monospace}
+
+/* ---------- top bar ---------- */
+header.top{position:sticky;top:0;z-index:20;background:var(--panel);border-bottom:1px solid var(--border);box-shadow:var(--shadow)}
+.top-in{max-width:1280px;margin:0 auto;padding:10px 20px;display:flex;align-items:center;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;white-space:nowrap}
+.brand .logo{width:32px;height:32px;border-radius:8px;background:var(--accent);color:#fff;display:grid;place-items:center;font-size:14px}
+.brand small{display:block;font-weight:500;color:var(--muted);font-size:12px;line-height:1.2}
+.prog{flex:1;min-width:120px}
+.prog .bar{height:8px;background:var(--panel2);border-radius:99px;overflow:hidden}
+.prog .bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .4s}
+.prog .lbl{font-size:12px;color:var(--muted);margin-top:3px}
+.btn{border:1px solid var(--border);background:var(--panel);color:var(--text);padding:7px 12px;border-radius:8px;cursor:pointer;font:inherit;font-size:14px}
+.btn:hover{border-color:var(--accent);color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+.btn.primary:hover{filter:brightness(1.08);color:#fff}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1280px;margin:0 auto;display:grid;grid-template-columns:270px 1fr;gap:24px;padding:24px 20px 80px}
+nav.side{position:sticky;top:76px;align-self:start;background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:10px;box-shadow:var(--shadow)}
+nav.side button{display:flex;width:100%;align-items:center;gap:10px;text-align:left;border:0;background:none;color:var(--text);padding:9px 10px;border-radius:9px;cursor:pointer;font:inherit;font-size:14.5px}
+nav.side button:hover{background:var(--panel2)}
+nav.side button.on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+nav.side .num{width:26px;height:26px;flex:none;border-radius:50%;display:grid;place-items:center;background:var(--panel2);font-size:12.5px;font-weight:700}
+nav.side button.on .num{background:var(--accent);color:#fff}
+nav.side .sc{margin-left:auto;font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+nav.side .sc.full{color:var(--ok);font-weight:700}
+main{min-width:0}
+
+/* ---------- lesson ---------- */
+.hero{background:linear-gradient(135deg,var(--accent),#7c3aed);color:#fff;border-radius:16px;padding:26px 28px;margin-bottom:22px}
+.hero .k{opacity:.85;font-size:13px;letter-spacing:.06em;text-transform:uppercase;font-weight:600}
+.hero h1{margin:4px 0 6px;font-size:28px;line-height:1.25}
+.hero p{margin:0;opacity:.92}
+.hero .pdf{display:inline-block;margin-top:12px;background:rgba(255,255,255,.18);padding:3px 10px;border-radius:99px;font-size:13px}
+section.blk{background:var(--panel);border:1px solid var(--border);border-radius:14px;padding:22px 26px;margin-bottom:20px;box-shadow:var(--shadow)}
+section.blk>h2{margin:0 0 14px;font-size:20px;display:flex;align-items:center;gap:10px}
+section.blk>h2 .tag{font-size:12px;font-weight:600;padding:2px 9px;border-radius:99px;background:var(--panel2);color:var(--muted)}
+.cours h3{font-size:17px;margin:22px 0 8px;color:var(--accent)}
+.cours h3:first-child{margin-top:0}
+.cours p{margin:8px 0}
+.cours ul{margin:8px 0;padding-left:22px}
+.cours li{margin:4px 0}
+:not(pre)>code{background:var(--panel2);border:1px solid var(--border);padding:1px 5px;border-radius:5px;font-size:.88em}
+table{border-collapse:collapse;width:100%;margin:10px 0;font-size:14.5px}
+.tbl{overflow-x:auto}
+th,td{border:1px solid var(--border);padding:7px 10px;text-align:left;vertical-align:top}
+th{background:var(--panel2);font-weight:600}
+.note{border-left:4px solid var(--key);background:var(--key-soft);padding:10px 14px;border-radius:0 10px 10px 0;margin:12px 0}
+.note.warn{border-color:var(--warn);background:var(--warn-soft)}
+.note.tip{border-color:var(--ok);background:var(--ok-soft)}
+.note b.t{display:block;margin-bottom:2px}
+.flow{display:flex;flex-wrap:wrap;align-items:stretch;gap:6px;margin:12px 0}
+.flow .st{flex:1;min-width:110px;background:var(--panel2);border:1px solid var(--border);border-radius:10px;padding:10px;text-align:center}
+.flow .st b{display:block}
+.flow .st span{font-size:12.5px;color:var(--muted)}
+.flow .ar{align-self:center;color:var(--accent);font-weight:700}
+
+/* ---------- code ---------- */
+pre.code{background:var(--code-bg);color:var(--code-text);padding:14px 16px;border-radius:10px;overflow-x:auto;font-size:13.8px;line-height:1.6;margin:10px 0;tab-size:4}
+.cap{font-size:12.5px;color:var(--muted);margin:10px 0 -6px}
+.k1{color:#c792ea}.k2{color:#7fdbca}.k3{color:#ffcb6b}.k4{color:#f78c6c}.k5{color:#7a8299;font-style:italic}.k6{color:#addb67}
+
+/* ---------- QCM ---------- */
+.q{border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin:12px 0;background:var(--panel)}
+.q .qt{font-weight:600;margin-bottom:10px}
+.q .qt .n{color:var(--accent);margin-right:6px}
+.opts{display:grid;gap:7px}
+.opt{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--border);border-radius:9px;padding:8px 12px;cursor:pointer;background:var(--panel);text-align:left;font:inherit;color:inherit;width:100%}
+.opt:hover:not([disabled]){border-color:var(--accent);background:var(--accent-soft)}
+.opt .l{flex:none;width:22px;height:22px;border-radius:50%;border:1px solid var(--border);display:grid;place-items:center;font-size:12px;font-weight:700}
+.opt[disabled]{cursor:default}
+.opt.good{border-color:var(--ok);background:var(--ok-soft)}
+.opt.good .l{background:var(--ok);border-color:var(--ok);color:#fff}
+.opt.wrong{border-color:var(--bad);background:var(--bad-soft)}
+.opt.wrong .l{background:var(--bad);border-color:var(--bad);color:#fff}
+.expl{margin-top:10px;padding:9px 12px;border-radius:9px;font-size:14.5px;display:none}
+.expl.show{display:block}
+.expl.ok{background:var(--ok-soft)}
+.expl.ko{background:var(--bad-soft)}
+
+/* ---------- fill / write ---------- */
+.ex{border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin:14px 0}
+.ex h4{margin:0 0 4px;font-size:16px}
+.ex .d{color:var(--muted);font-size:14.5px;margin:0 0 6px}
+.blank{background:#2a2f44;color:#fff;border:0;border-bottom:2px dashed #8b83ff;border-radius:4px;padding:0 4px;font-size:13.5px;outline:none;min-width:2.5ch}
+.blank:focus{background:#353b57;border-bottom-style:solid}
+.blank.ok{border-bottom:2px solid #4ade80;background:#173524}
+.blank.ko{border-bottom:2px solid #f87171;background:#3f1d1d}
+.blank.shown{border-bottom:2px solid #fbbf24;background:#3a3016}
+.acts{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:8px}
+.res{font-size:14px;font-weight:600}
+.res.ok{color:var(--ok)}.res.ko{color:var(--bad)}
+textarea.w{width:100%;min-height:170px;background:var(--code-bg);color:var(--code-text);border:1px solid var(--border);border-radius:10px;padding:12px 14px;font-size:13.8px;line-height:1.55;resize:vertical;tab-size:4}
+.sol{display:none}
+.sol.show{display:block}
+.pager{display:flex;justify-content:space-between;gap:10px;margin-top:10px}
+
+@media (max-width:900px){
+  .wrap{grid-template-columns:1fr;padding:16px 16px 70px}
+  nav.side{position:static;display:flex;overflow-x:auto;gap:4px;padding:6px}
+  nav.side button{flex:none;width:auto;white-space:nowrap}
+  nav.side .sc,nav.side .tx{display:none}
+  .top-in{padding:10px 16px;flex-wrap:wrap}
+  .brand small{display:none}
+  section.blk{padding:16px}
+  .hero{padding:20px}
+  .hero h1{font-size:22px}
+}
+@media print{
+  header.top,nav.side,.acts,.pager,.btn{display:none!important}
+  .wrap{display:block;padding:0}
+  .lesson{display:block!important;page-break-after:always}
+  .sol,.expl{display:block!important}
+  section.blk{box-shadow:none}
+}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="top-in">
+    <div class="brand"><div class="logo">C#</div><div>Révision Devoir<small>TP6 · TP7 · chapitres 1 à 5</small></div></div>
+    <div class="prog"><div class="bar"><i id="gbar"></i></div><div class="lbl" id="glbl"></div></div>
+    <button class="btn" id="theme" title="Changer de thème">◐ Thème</button>
+    <button class="btn" id="reset" title="Effacer toutes mes réponses">↺ Recommencer</button>
+  </div>
+</header>
+<div class="wrap">
+  <nav class="side" id="side"></nav>
+  <main id="main"></main>
+</div>
+
+<script>
+/* =====================================================================
+   CONTENU — devoir TP6 : compléments des chapitres 1 à 5
+   Blocs de cours : h (titre), p (html), code (texte brut), table, note, list, flow
+   Code à compléter : ⟦réponse⟧  —  plusieurs réponses acceptées : ⟦a‖b⟧
+   ===================================================================== */
+const R = String.raw;
+
+const LESSONS = [
+/* ---------------------------------------------------------------- 1 */
+{
+  title:"ASP.NET Core et REST : les bases",
+  pdf:"Chapitre 1 + Chapitre 5",
+  intro:"Les questions de cours du devoir : ce qu'est ASP.NET Core, à quoi sert chaque fichier du projet, et les règles d'une API REST.",
+  cours:[
+    {t:'h',v:".NET Core et ASP.NET Core"},
+    {t:'list',v:[
+      "<b>.NET Core</b> : plate-forme <b>gratuite, open source et multiplateforme</b> (Windows, macOS, Linux) de Microsoft. On l'étend avec des <b>packages NuGet</b> (architecture <b>modulaire</b>).",
+      "<b>ASP.NET Core</b> : le framework web de .NET Core. <b>Un seul modèle pour MVC et Web API</b> (avant, c'étaient deux frameworks séparés).",
+      "Atouts à citer : multiplateforme, rapide (on n'inclut que les packages utiles), <b>conteneur IoC intégré</b> pour l'injection de dépendances, hébergement sur IIS, Apache, Nginx, Docker.",
+      "Composition de .NET Core : <b>CLI</b> (outils en ligne de commande), <b>Roslyn</b> (compilateur C#/VB), <b>CoreFX</b> (bibliothèques), <b>CoreCLR</b> (le runtime)."]},
+    {t:'h',v:"Les fichiers d'un projet"},
+    {t:'table',head:["Fichier","Rôle","Dans le TP6"],rows:[
+      ["<code>.csproj</code>","framework cible, références des packages NuGet","<code>net10.0</code>, EF Core SqlServer/Tools/Design"],
+      ["<code>Properties/launchSettings.json</code>","profils de lancement (URL, port, variable d'environnement)","<code>https://localhost:7159</code>, <code>launchUrl: swagger</code>"],
+      ["<code>appsettings.json</code>","configuration de l'application (remplace l'ancien <code>web.config</code>)","la chaîne de connexion <code>DbConnection</code>"],
+      ["<code>Program.cs</code>","① inscription des <b>services</b> ② configuration du <b>pipeline de middlewares</b>","<code>AddDbContext</code>, <code>AddScoped</code>, <code>UseSwagger</code>…"],
+      ["<code>wwwroot/</code>","fichiers statiques (css, js, images), servis par <code>app.UseStaticFiles()</code>","pas utilisé dans une API"]]},
+    {t:'h',v:"Program.cs en deux parties"},
+    {t:'code',v:R`var builder = WebApplication.CreateBuilder(args);
+
+// ───── ① SERVICES : ce que l'application sait fournir (injection) ─────
+builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+builder.Services.AddDbContext<AppDbContext>(o =>
+    o.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection")));
+builder.Services.AddScoped<ICompteRepository, CompteRepository>();
+
+var app = builder.Build();
+
+// ───── ② PIPELINE : les middlewares, exécutés DANS L'ORDRE à chaque requête ─────
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();          // Swagger seulement en développement
+    app.UseSwaggerUI();
+}
+app.UseHttpsRedirection();
+app.UseAuthorization();
+app.MapControllers();
+app.Run();`},
+    {t:'h',v:"Les middlewares"},
+    {t:'list',v:[
+      "Un <b>middleware</b> est un composant qui traite une requête ou une réponse HTTP, avec un rôle précis : authentifier, gérer les erreurs, servir des fichiers statiques…",
+      "Ils forment un <b>pipeline</b> : chacun peut traiter la requête puis la passer au suivant, ou <b>s'arrêter</b> sans appeler le suivant.",
+      "Ils s'exécutent <b>dans l'ordre où ils sont ajoutés</b> dans <code>Program.cs</code>."]},
+    {t:'h',v:"Les environnements"},
+    {t:'p',v:"La variable <code>ASPNETCORE_ENVIRONMENT</code> (définie dans <code>launchSettings.json</code>) vaut en général <b>Development</b>, <b>Staging</b> ou <b>Production</b>. On la teste avec <code>IsDevelopment()</code>, <code>IsStaging()</code>, <code>IsProduction()</code>. Si elle est définie à la fois dans launchSettings.json et dans le système, <b>launchSettings.json gagne</b>."},
+    {t:'h',v:"REST : ressource + URI + verbe"},
+    {t:'p',v:"Une <b>ressource</b> est une entité de données (Compte, Client, Operation). La <b>combinaison URI + verbe HTTP</b> dit à l'API quoi faire :"},
+    {t:'table',head:["URI","Verbe","Résultat"],rows:[
+      ["<code>/api/Compte</code>","GET","la liste des comptes"],
+      ["<code>/api/Compte/1</code>","GET","le compte d'Id 1"],
+      ["<code>/api/Compte</code>","POST","crée un compte"],
+      ["<code>/api/Compte/1</code>","PUT","modifie <b>tout</b> le compte 1"],
+      ["<code>/api/Compte/1</code>","PATCH","modifie <b>une partie</b> du compte 1"],
+      ["<code>/api/Compte/1</code>","DELETE","supprime le compte 1"]]},
+    {t:'note',kind:'key',v:"<b class='t'>À retenir pour le devoir</b>Mêmes URI, verbes différents = actions différentes. C'est pourquoi <code>GET /api/Compte/1</code> et <code>DELETE /api/Compte/1</code> ne sont pas en conflit, mais deux <code>[HttpPost]</code> sans route le sont."}
+  ],
+  qcm:[
+    {q:"Quelle phrase décrit ASP.NET Core ?",o:["Un framework web réservé à Windows","Un framework web open source et multiplateforme, avec un seul modèle pour MVC et Web API","Un système de gestion de base de données","Un langage de programmation"],a:1,e:"Open source, multiplateforme, MVC et Web API unifiés."},
+    {q:"Où met-on la chaîne de connexion ?",o:["<code>Program.cs</code>","<code>launchSettings.json</code>","<code>appsettings.json</code>","<code>.csproj</code>"],a:2,e:"Dans <code>appsettings.json</code>, section <code>ConnectionStrings</code>, plutôt que dans le code."},
+    {q:"Quelles sont les deux parties de <code>Program.cs</code> ?",o:["Les vues et les modèles","L'inscription des services et le pipeline de middlewares","Les migrations et les tables","Le front et le back"],a:1,e:"Avant <code>builder.Build()</code> : les services. Après : les middlewares."},
+    {q:"Dans quel ordre s'exécutent les middlewares ?",o:["Au hasard","Par ordre alphabétique","Dans l'ordre où ils sont ajoutés dans Program.cs","Du dernier au premier"],a:2,e:"L'ordre d'ajout compte."},
+    {q:"Quel fichier contient le port et le profil de lancement ?",o:["<code>appsettings.json</code>","<code>Properties/launchSettings.json</code>","<code>Program.cs</code>","<code>wwwroot</code>"],a:1,e:"<code>launchSettings.json</code> contient les profils (http, https, IIS Express)."},
+    {q:"Quel verbe modifie <b>une partie</b> d'une ressource ?",o:["PUT","POST","PATCH","GET"],a:2,e:"PUT remplace toute la ressource, PATCH n'en modifie qu'une partie."},
+    {q:"Pourquoi <code>app.UseSwagger()</code> est-il dans <code>if (app.Environment.IsDevelopment())</code> ?",o:["Swagger ne marche pas en production","Pour n'exposer la documentation de test qu'en développement","C'est obligatoire en C#","Pour accélérer la compilation"],a:1,e:"On évite d'exposer l'outil de test en production."},
+    {q:"Que contient le dossier <code>wwwroot</code> ?",o:["Les migrations","Les contrôleurs","Les fichiers statiques (css, js, images)","La base de données"],a:2,e:"C'est la racine web ; il faut <code>app.UseStaticFiles()</code> pour les servir."}
+  ],
+  fills:[
+    {title:"Program.cs : services puis pipeline",desc:"",code:R`var builder = WebApplication.⟦CreateBuilder⟧(args);
+
+builder.Services.⟦AddControllers⟧();
+builder.Services.AddSwaggerGen();
+
+var app = builder.⟦Build⟧();
+
+if (app.Environment.⟦IsDevelopment⟧())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+app.UseHttpsRedirection();
+app.⟦MapControllers⟧();
+app.⟦Run⟧();`},
+    {title:"Les verbes REST du TP6",desc:"Complète le verbe HTTP de chaque action.",code:R`[⟦HttpGet⟧]                    // liste des comptes
+[⟦HttpPost⟧]                   // créer un compte
+[⟦HttpPut⟧("{id:int}")]        // modifier tout le compte
+[⟦HttpDelete⟧("{id:int}")]     // supprimer le compte`}
+  ],
+  writes:[
+    {title:"Question de cours : explique le rôle de Program.cs",desc:"Réponds en 3-4 phrases, comme dans une copie de devoir.",sol:R`// Réponse type :
+// Program.cs est le point d'entrée de l'application. Il a deux rôles :
+// 1) Inscrire les services dans le conteneur d'injection de dépendances
+//    (AddControllers, AddDbContext<AppDbContext>, AddScoped<ICompteRepository, CompteRepository>).
+//    Une fois inscrits, ils peuvent être injectés partout par constructeur.
+// 2) Configurer le pipeline de requêtes HTTP avec des middlewares
+//    (UseSwagger, UseHttpsRedirection, UseAuthorization, MapControllers),
+//    qui s'exécutent dans l'ordre où ils sont ajoutés.`}
+  ]
+},
+/* ---------------------------------------------------------------- 2 */
+{
+  title:"L'injection de dépendances en détail",
+  pdf:"Chapitre 1 + 2 + 5",
+  intro:"Pourquoi on injecte au lieu de faire new, les 3 durées de vie des services, et les avantages du repository : des questions très fréquentes en devoir.",
+  cours:[
+    {t:'h',v:"Le principe"},
+    {t:'p',v:"ASP.NET Core appelle <b>service</b> toute classe utilisée par une autre classe. Au lieu de faire <code>new</code>, la classe demande ce dont elle a besoin <b>dans son constructeur</b> (<b>injection par constructeur</b>), et le <b>conteneur IoC</b> intégré la fournit."},
+    {t:'code',v:R`public class CompteController : ControllerBase
+{
+    private readonly ICompteRepository _repository;
+
+    public CompteController(ICompteRepository repository)   // injection par constructeur
+    {
+        _repository = repository;
+    }
+}`},
+    {t:'note',kind:'warn',v:"<b class='t'>Si le service n'est pas inscrit</b>Erreur au lancement : « <i>Unable to resolve service for type 'ICompteRepository' while attempting to activate 'CompteController'</i> ». Solution : l'inscrire dans <code>Program.cs</code>."},
+    {t:'h',v:"Les 3 durées de vie (cycle de vie)"},
+    {t:'table',head:["Méthode","Une instance créée…","Exemple d'usage"],rows:[
+      ["<code>AddSingleton()</code>","<b>une seule fois</b> pour toute l'application, à la 1<sup>re</sup> demande, puis partagée","un cache, une configuration"],
+      ["<code>AddScoped()</code>","<b>une fois par requête HTTP</b> (la même pendant toute la requête)","<b>le repository</b> et le DbContext"],
+      ["<code>AddTransient()</code>","<b>à chaque fois</b> qu'on la demande","un petit service sans état"]]},
+    {t:'note',kind:'key',v:"<b class='t'>Pourquoi AddScoped pour le repository ?</b><code>AddDbContext</code> inscrit le <code>AppDbContext</code> en <b>Scoped</b>. Le repository qui l'utilise doit donc être <b>Scoped</b> lui aussi : un Singleton garderait le même contexte pour toutes les requêtes de tous les utilisateurs (ASP.NET refuse d'ailleurs cette combinaison au démarrage)."},
+    {t:'h',v:"AddDbContext ou AddDbContextPool"},
+    {t:'list',v:[
+      "<code>AddDbContext&lt;AppDbContext&gt;(...)</code> : un nouveau contexte par requête.",
+      "<code>AddDbContextPool&lt;AppDbContext&gt;(...)</code> : réutilise une instance d'un <b>pool</b> si elle est disponible, au lieu d'en créer une nouvelle (plus performant).",
+      "Dans les deux cas : <code>UseSqlServer(...)</code> choisit SQL Server, et <code>GetConnectionString(\"Nom\")</code> lit la chaîne dans appsettings.json."]},
+    {t:'h',v:"Les avantages du repository (question de cours classique)"},
+    {t:'list',v:[
+      "Code <b>plus propre</b>, plus facile à <b>réutiliser</b> et à <b>maintenir</b>.",
+      "Système <b>faiblement couplé</b> : le contrôleur dépend de l'<b>interface</b>, pas de la classe.",
+      "On peut <b>changer de base</b> : écrire un <code>OracleCompteRepository</code> et changer une seule ligne dans Program.cs.",
+      "<b>Tests unitaires</b> : on remplace le vrai repository par une fausse implémentation."]},
+    {t:'code',cap:"Changer d'implémentation = une seule ligne",v:R`// SQL Server
+builder.Services.AddScoped<ICompteRepository, CompteRepository>();
+// Oracle (le contrôleur ne change pas !)
+builder.Services.AddScoped<ICompteRepository, OracleCompteRepository>();`},
+    {t:'h',v:"Mettre les classes dans une bibliothèque de classes"},
+    {t:'p',v:"Dans le chapitre 5, les classes du modèle sont placées dans un projet séparé de type <b>Bibliothèque de classes</b> (« MesClasses ») pour être <b>réutilisées</b> dans d'autres projets. Il faut alors ajouter une <b>référence de projet</b> (clic droit sur Dépendances → Ajouter une référence de projet) et la directive <code>using MesClasses;</code>."}
+  ],
+  qcm:[
+    {q:"Qu'est-ce que l'injection par constructeur ?",o:["Faire <code>new</code> dans le constructeur","Recevoir ses dépendances en paramètres du constructeur, fournies par le conteneur","Écrire le constructeur dans Program.cs","Appeler la base dans le constructeur"],a:1,e:"La classe déclare ce dont elle a besoin, ASP.NET le fournit."},
+    {q:"<code>AddSingleton</code> crée le service…",o:["à chaque demande","une fois par requête HTTP","une seule fois pour toute l'application","jamais"],a:2,e:"Une seule instance partagée pendant toute la vie de l'application."},
+    {q:"<code>AddScoped</code> crée le service…",o:["à chaque demande","une fois par requête HTTP","une seule fois pour toute l'application","au démarrage"],a:1,e:"Une instance par requête, réutilisée pendant cette requête."},
+    {q:"<code>AddTransient</code> crée le service…",o:["à chaque fois qu'il est demandé","une fois par requête","une fois pour l'application","seulement en développement"],a:0,e:"Nouvelle instance à chaque injection."},
+    {q:"Quelle durée de vie pour <code>CompteRepository</code> qui utilise <code>AppDbContext</code> ?",o:["Singleton","Scoped","Transient obligatoirement","Aucune"],a:1,e:"Le DbContext est Scoped ; le repository doit l'être aussi."},
+    {q:"Différence entre <code>AddDbContext</code> et <code>AddDbContextPool</code> ?",o:["Aucune","Pool réutilise une instance disponible d'un pool au lieu d'en créer une nouvelle","Pool est pour MySQL","Pool crée la base"],a:1,e:"Le pooling améliore les performances."},
+    {q:"Lequel n'est <b>pas</b> un avantage du repository ?",o:["Faible couplage","Faciliter les tests unitaires","Changer de base facilement","Supprimer le besoin de migrations"],a:3,e:"Les migrations restent nécessaires : le repository ne crée pas la base."},
+    {q:"Le contrôleur reçoit <code>ICompteRepository</code> et non <code>CompteRepository</code>. Pourquoi ?",o:["C'est plus court","Pour dépendre du contrat (interface) et pouvoir changer d'implémentation","Parce que la classe est privée","C'est une erreur"],a:1,e:"C'est le faible couplage."}
+  ],
+  fills:[
+    {title:"Inscrire les services du TP6",desc:"",code:R`builder.Services.⟦AddDbContext⟧<AppDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DbConnection")));
+
+builder.Services.⟦AddScoped⟧<⟦ICompteRepository⟧, ⟦CompteRepository⟧>();`},
+    {title:"Injection dans le contrôleur",desc:"",code:R`public class CompteController : ControllerBase
+{
+    private ⟦readonly⟧ ICompteRepository _repository;
+
+    public ⟦CompteController⟧(⟦ICompteRepository⟧ repository)
+    {
+        _repository = ⟦repository⟧;
+    }
+}`},
+    {title:"La durée de vie",desc:"Écris la bonne méthode d'inscription.",code:R`// une instance unique pour toute l'application
+builder.Services.⟦AddSingleton⟧<IConfigService, ConfigService>();
+// une instance par requête HTTP
+builder.Services.⟦AddScoped⟧<ICompteRepository, CompteRepository>();
+// une nouvelle instance à chaque injection
+builder.Services.⟦AddTransient⟧<IFormatService, FormatService>();`}
+  ],
+  writes:[
+    {title:"Question de cours : 3 avantages du repository",desc:"Cite et explique en une ligne chacun.",sol:R`// 1) Faible couplage : le contrôleur dépend de l'interface ICompteRepository,
+//    pas de la classe CompteRepository.
+// 2) Changement de base facile : on écrit OracleCompteRepository et on change
+//    seulement la ligne AddScoped dans Program.cs.
+// 3) Tests unitaires : on peut injecter un faux repository (en mémoire) à la place du vrai.
+// (aussi : code plus propre, réutilisable et maintenable)`},
+    {title:"Question de cours : Singleton, Scoped, Transient",desc:"Explique la différence et donne la bonne durée de vie pour le repository du TP6.",sol:R`// AddSingleton : une seule instance pour toute la durée de vie de l'application.
+// AddScoped    : une instance par requête HTTP (partagée pendant cette requête).
+// AddTransient : une nouvelle instance à chaque fois que le service est demandé.
+//
+// Pour CompteRepository : AddScoped, car il utilise AppDbContext,
+// qui est inscrit en Scoped par AddDbContext.`}
+  ]
+},
+/* ---------------------------------------------------------------- 3 */
+{
+  title:"Entity Framework Core en détail",
+  pdf:"Chapitre 3",
+  intro:"Ce que le cours ajoute au TP6 sur EF Core : les deux approches, les providers, les conventions de clés et de relations.",
+  cours:[
+    {t:'h',v:"EF Core en une phrase"},
+    {t:'p',v:"<b>Entity Framework Core</b> est un <b>ORM</b> (mapping objet/relationnel) open source, léger et multiplateforme. C'est une amélioration d'<b>ADO.NET</b> : il automatise l'accès et l'enregistrement des données. Il <b>ne fait pas partie de .NET</b> : on l'installe avec des packages NuGet."},
+    {t:'h',v:"Code First ou Database First"},
+    {t:'table',head:["Approche","On part de…","EF génère…","Commande"],rows:[
+      ["<b>Code First</b> (TP6)","les <b>classes</b> C#","la base et les tables","<code>Add-Migration</code> + <code>Update-Database</code>"],
+      ["<b>Database First</b>","une <b>base existante</b>","les classes et le DbContext (reverse engineering)","<code>Scaffold-DbContext</code>"]]},
+    {t:'code',cap:"Database First : générer les classes depuis une base existante (Console du Gestionnaire de package)",v:R`PM> Scaffold-DbContext "server=(localdb)\MSSQLLocalDB;database=bd;Trusted_Connection=true" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models`},
+    {t:'p',v:"Résultat : une classe par table, plus une classe de contexte. EF Core cible surtout Code First ; il n'a plus l'assistant visuel d'EF6 pour Database First."},
+    {t:'h',v:"Les fournisseurs (providers)"},
+    {t:'table',head:["Base","Package NuGet"],rows:[
+      ["SQL Server","<code>Microsoft.EntityFrameworkCore.SqlServer</code>"],
+      ["SQLite","<code>Microsoft.EntityFrameworkCore.Sqlite</code>"],
+      ["PostgreSQL","<code>Npgsql.EntityFrameworkCore.PostgreSQL</code>"],
+      ["MySQL","<code>MySql.Data.EntityFrameworkCore</code>"]]},
+    {t:'p',v:"Le package <code>...SqlServer</code> installe aussi <code>Microsoft.EntityFrameworkCore.Relational</code> et <code>Microsoft.Data.SqlClient</code>. Le package <code>...Tools</code> ajoute les commandes de migration."},
+    {t:'h',v:"DbContext, DbContextOptions, DbSet"},
+    {t:'list',v:[
+      "<code>DbContext</code> (namespace <code>Microsoft.EntityFrameworkCore</code>) <b>gère la connexion</b> et sert à lire et enregistrer les données.",
+      "<code>DbContextOptions</code> transporte la configuration : <b>chaîne de connexion</b> et <b>provider</b>. On la reçoit par le constructeur et on la passe à <code>base(options)</code>.",
+      "<code>DbSet&lt;Compte&gt;</code> : une propriété par entité. Les requêtes LINQ sur un DbSet sont <b>traduites en SQL</b>."]},
+    {t:'h',v:"Les conventions EF Core"},
+    {t:'table',head:["Convention","Règle","Exemple TP6"],rows:[
+      ["Clé primaire","propriété <code>Id</code> ou <code>NomClasseId</code>","<code>Compte.Id</code>"],
+      ["Clé étrangère","<code>NomNavigation</code> + <code>Id</code>, ou <code>NomClassePrincipale</code> + <code>Id</code>","<code>Compte.ClientID</code>"],
+      ["One-to-many","navigation de référence d'un côté + collection de l'autre","<code>Compte.Client</code> + <code>Client.Compte</code>"],
+      ["One-to-one","une navigation de référence de chaque côté, la FK d'un côté","ex. <code>Client</code> ↔ <code>Adresse</code>"],
+      ["Colonnes","une propriété publique avec get/set = une colonne ; <code>string?</code> ou <code>int?</code> = colonne nullable","<code>Image</code> nullable"]]},
+    {t:'code',cap:"Exemple du cours (chapitre 5) : FK nullable et enum",v:R`public class Employee
+{
+    public int EmployeeId { get; set; }            // clé : NomClasse + Id
+    public int DepartmentId { get; set; }          // clé étrangère
+    public Department? Department { get; set; }    // navigation
+    public Gender Gender { get; set; }             // enum → colonne int
+}
+public enum Gender { Male, Female }`},
+    {t:'note',kind:'tip',v:"<b class='t'>Variante possible dans le devoir</b>Le type de compte pourrait devenir un <code>enum TypeCompte { Courant, Epargne }</code>, ou le type d'opération un <code>enum TypeOperation { Retrait, Versement, Virement }</code>. EF le stocke comme un nombre."}
+  ],
+  qcm:[
+    {q:"Qu'est-ce qu'EF Core ?",o:["Un serveur web","Un ORM : mapping objet/relationnel","Un langage de requêtes","Un éditeur de code"],a:1,e:"EF Core relie les classes C# aux tables."},
+    {q:"La base existe déjà et on veut générer les classes. Quelle approche ?",o:["Code First","Database First","Model First","API First"],a:1,e:"Database First avec Scaffold-DbContext."},
+    {q:"Quelle commande génère les classes à partir d'une base existante ?",o:["<code>Add-Migration</code>","<code>Update-Database</code>","<code>Scaffold-DbContext</code>","<code>dotnet new</code>"],a:2,e:"Reverse engineering avec Scaffold-DbContext."},
+    {q:"Que transporte <code>DbContextOptions</code> ?",o:["Les données des tables","La chaîne de connexion et le provider","Les routes de l'API","Les migrations"],a:1,e:"La configuration nécessaire au DbContext."},
+    {q:"Le TP6 utilise quelle approche ?",o:["Database First","Code First","Les deux","Aucune"],a:1,e:"On écrit les classes, puis les migrations créent la base."},
+    {q:"Quel package pour une base SQLite ?",o:["<code>Microsoft.EntityFrameworkCore.SqlServer</code>","<code>Microsoft.EntityFrameworkCore.Sqlite</code>","<code>Npgsql...</code>","<code>...Tools</code>"],a:1,e:"Un provider par base."},
+    {q:"Dans <code>Employee</code>, quelle propriété EF prend comme clé primaire ?",o:["<code>DepartmentId</code>","<code>EmployeeId</code>","<code>Gender</code>","Aucune"],a:1,e:"<code>NomClasse + Id</code> = clé primaire. <code>DepartmentId</code> est une clé étrangère."},
+    {q:"Qu'est-ce qu'EF Core par rapport à ADO.NET ?",o:["Son remplaçant total sans lien","Une amélioration qui automatise l'accès aux données","Un pilote SQL","Une base de données"],a:1,e:"Selon le cours : une amélioration d'ADO.NET."}
+  ],
+  fills:[
+    {title:"Une relation one-to-many (Client → Comptes)",desc:"",code:R`public class Client
+{
+    public int ⟦Id⟧ { get; set; }                         // clé primaire
+    public ⟦ICollection<Compte>?‖ICollection<Compte>⟧ Compte { get; set; }
+}
+
+public class Compte
+{
+    public int Id { get; set; }
+    public int ⟦ClientID⟧ { get; set; }                   // clé étrangère
+    public ⟦Client?‖Client⟧ Client { get; set; }          // navigation
+}`},
+    {title:"Database First",desc:"",code:R`PM> ⟦Scaffold-DbContext⟧ "server=(localdb)\MSSQLLocalDB;database=bd;Trusted_Connection=true" Microsoft.EntityFrameworkCore.⟦SqlServer⟧ -⟦OutputDir⟧ Models`},
+    {title:"Un enum pour le type d'opération",desc:"",code:R`public ⟦enum⟧ TypeOperation { Retrait, Versement, Virement }
+
+public class Operation
+{
+    public int Id { get; set; }
+    public ⟦TypeOperation⟧ Type { get; set; }   // stocké en int dans la base
+}`}
+  ],
+  writes:[
+    {title:"Question de cours : Code First et Database First",desc:"Explique la différence et donne la commande de chacune.",sol:R`// Code First : on écrit d'abord les classes du modèle et le DbContext,
+//   puis EF Core crée la base avec les migrations :
+//   PM> Add-Migration InitialCreate
+//   PM> Update-Database
+//
+// Database First : la base existe déjà ; EF Core génère les classes
+//   et le DbContext par reverse engineering :
+//   PM> Scaffold-DbContext "<chaîne de connexion>" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models`}
+  ]
+},
+/* ---------------------------------------------------------------- 4 */
+{
+  title:"Ajouter, modifier, supprimer",
+  pdf:"Chapitre 3 + Chapitre 5",
+  intro:"Les différentes façons d'écrire Add, Update et Delete dans le repository : le cours en montre plusieurs, le devoir peut demander n'importe laquelle.",
+  cours:[
+    {t:'h',v:"Ajouter"},
+    {t:'code',cap:"Version du TP6",v:R`public async Task<Compte> Add(Compte c)
+{
+    _context.Comptes.Add(c);
+    await _context.SaveChangesAsync();
+    return c;                         // c a reçu son Id après SaveChanges
+}`},
+    {t:'code',cap:"Version du cours (chapitre 5) : AddAsync + result.Entity",v:R`public async Task<Compte> Add(Compte c)
+{
+    var result = await _context.Comptes.AddAsync(c);
+    await _context.SaveChangesAsync();
+    return result.Entity;             // l'objet suivi par EF
+}`},
+    {t:'h',v:"Modifier : 3 façons"},
+    {t:'code',cap:"① Charger puis copier les propriétés (cours chapitre 5, la plus sûre)",v:R`public async Task<Compte?> update(Compte c)
+{
+    var result = await _context.Comptes.FirstOrDefaultAsync(x => x.Id == c.Id);
+    if (result != null)
+    {
+        result.NuméroCompte = c.NuméroCompte;
+        result.TypeCompte   = c.TypeCompte;
+        result.ClientID     = c.ClientID;
+        await _context.SaveChangesAsync();
+        return result;
+    }
+    return null;                      // pas trouvé → le contrôleur renverra 404
+}`},
+    {t:'code',cap:"② Update (TP6)",v:R`_context.Comptes.Update(c);
+await _context.SaveChangesAsync();`},
+    {t:'code',cap:"③ Attach + EntityState.Modified (cours chapitre 3)",v:R`var entry = _context.Comptes.Attach(c);
+entry.State = EntityState.Modified;    // « tout cet objet a changé »
+await _context.SaveChangesAsync();`},
+    {t:'note',kind:'key',v:"<b class='t'>Différence importante</b>② et ③ écrivent <b>toutes</b> les colonnes avec les valeurs reçues. ① ne copie que ce qu'on choisit : on peut par exemple <b>ne jamais modifier le Solde</b> par un PUT, seulement par des opérations."},
+    {t:'h',v:"Supprimer"},
+    {t:'code',cap:"Avec FindAsync (TP6) ou FirstOrDefaultAsync (cours)",v:R`public async Task<Compte?> Delete(int CompteId)
+{
+    var result = await _context.Comptes.FirstOrDefaultAsync(c => c.Id == CompteId);
+    // ou : var result = await _context.Comptes.FindAsync(CompteId);
+    if (result != null)
+    {
+        _context.Comptes.Remove(result);
+        await _context.SaveChangesAsync();
+        return result;
+    }
+    return null;
+}`},
+    {t:'h',v:"Synchrone ou asynchrone"},
+    {t:'table',head:["Synchrone (chapitre 3)","Asynchrone (chapitre 5, TP6)"],rows:[
+      ["<code>context.Employees.Find(id)</code>","<code>await _context.Comptes.FindAsync(id)</code>"],
+      ["<code>context.SaveChanges()</code>","<code>await _context.SaveChangesAsync()</code>"],
+      ["<code>.First(...)</code>, <code>.ToList()</code>","<code>.FirstOrDefaultAsync(...)</code>, <code>.ToListAsync()</code>"],
+      ["<code>Employee GetEmployee(int id)</code>","<code>Task&lt;Employee&gt; GetEmployee(int id)</code>"]]},
+    {t:'note',kind:'warn',v:"<b class='t'>Find ou FirstOrDefault ?</b><code>Find</code> / <code>FindAsync</code> cherche <b>seulement par la clé primaire</b>. Pour chercher par un autre champ (<code>NuméroCompte</code>), il faut <code>FirstOrDefaultAsync(c =&gt; c.NuméroCompte == num)</code>. <code>First()</code> lève une exception si rien n'est trouvé ; <code>FirstOrDefault()</code> renvoie <code>null</code>."},
+    {t:'h',v:"IEnumerable ou IQueryable"},
+    {t:'p',v:"<code>IQueryable&lt;Compte&gt;</code> est une requête <b>pas encore exécutée</b> : on peut lui ajouter des <code>Where</code> au fur et à mesure, et le SQL n'est envoyé qu'au <code>ToListAsync()</code>. C'est ce que le cours utilise pour la recherche (leçon 7)."}
+  ],
+  qcm:[
+    {q:"Que renvoie <code>(await _context.Comptes.AddAsync(c)).Entity</code> ?",o:["Le nombre de lignes","L'objet compte suivi par EF","L'Id seulement","null"],a:1,e:"<code>AddAsync</code> renvoie une entrée ; <code>.Entity</code> est l'objet."},
+    {q:"Quelle façon de modifier permet d'empêcher la modification du Solde par un PUT ?",o:["<code>Update(c)</code>","<code>Attach</code> + <code>EntityState.Modified</code>","Charger l'objet puis copier seulement certaines propriétés","Aucune"],a:2,e:"On ne copie que les champs autorisés."},
+    {q:"<code>FindAsync(id)</code> cherche…",o:["par n'importe quel champ","seulement par la clé primaire","par le nom","par date"],a:1,e:"Pour un autre champ : <code>FirstOrDefaultAsync</code>."},
+    {q:"Différence entre <code>First()</code> et <code>FirstOrDefault()</code> si rien n'est trouvé ?",o:["Aucune","First lève une exception, FirstOrDefault renvoie null","First renvoie null, FirstOrDefault lève une exception","Les deux renvoient 0"],a:1,e:"D'où l'usage de FirstOrDefault + test null."},
+    {q:"Que fait <code>entry.State = EntityState.Modified;</code> ?",o:["Supprime l'objet","Indique à EF que l'objet entier a été modifié","Crée une migration","Annule les changements"],a:1,e:"Au SaveChanges, EF génère un UPDATE de toutes les colonnes."},
+    {q:"Quelle est la version synchrone de <code>SaveChangesAsync()</code> ?",o:["<code>Save()</code>","<code>SaveChanges()</code>","<code>Commit()</code>","<code>Update()</code>"],a:1,e:"Le cours chapitre 3 utilise la version synchrone."},
+    {q:"Pourquoi <code>update</code> renvoie-t-il <code>null</code> quand le compte n'existe pas ?",o:["Pour planter","Pour que le contrôleur puisse répondre 404","C'est obligatoire en C#","Pour créer le compte"],a:1,e:"Le contrôleur teste null et renvoie NotFound."}
+  ],
+  fills:[
+    {title:"Update en copiant les propriétés",desc:"",code:R`public async Task<Compte?> update(Compte c)
+{
+    var result = await _context.Comptes.⟦FirstOrDefaultAsync⟧(x => x.Id == c.⟦Id⟧);
+    if (result ⟦!=⟧ null)
+    {
+        result.NuméroCompte = c.⟦NuméroCompte⟧;
+        result.TypeCompte = c.TypeCompte;
+        await _context.⟦SaveChangesAsync⟧();
+        return ⟦result⟧;
+    }
+    return ⟦null⟧;
+}`},
+    {title:"Add avec AddAsync",desc:"",code:R`public async Task<Compte> Add(Compte c)
+{
+    var result = await _context.Comptes.⟦AddAsync⟧(c);
+    await _context.SaveChangesAsync();
+    return result.⟦Entity⟧;
+}`},
+    {title:"Update avec Attach",desc:"",code:R`var entry = _context.Comptes.⟦Attach⟧(c);
+entry.State = ⟦EntityState⟧.⟦Modified⟧;
+await _context.SaveChangesAsync();`}
+  ],
+  writes:[
+    {title:"Écris Delete version cours (avec FirstOrDefaultAsync)",desc:"Renvoie le compte supprimé, ou null s'il n'existe pas.",sol:R`public async Task<Compte?> Delete(int CompteId)
+{
+    var result = await _context.Comptes.FirstOrDefaultAsync(c => c.Id == CompteId);
+    if (result != null)
+    {
+        _context.Comptes.Remove(result);
+        await _context.SaveChangesAsync();
+        return result;
+    }
+    return null;
+}`},
+    {title:"Écris GetByNumero",desc:"Méthode utile pour la validation (leçon 6) : trouver un compte par son NuméroCompte (interface + classe).",sol:R`// Interface
+Task<Compte?> GetByNumero(int numero);
+
+// Classe
+public async Task<Compte?> GetByNumero(int numero)
+{
+    return await _context.Comptes.FirstOrDefaultAsync(c => c.NuméroCompte == numero);
+}`}
+  ]
+},
+/* ---------------------------------------------------------------- 5 */
+{
+  title:"Migrations avancées",
+  pdf:"Chapitre 3",
+  intro:"Ce qu'il y a dans un fichier de migration, comment annuler une migration déjà appliquée, et les commandes à connaître.",
+  cours:[
+    {t:'h',v:"Rôle des migrations"},
+    {t:'p',v:"Les migrations gardent le <b>schéma de la base synchronisé avec les classes</b>. À <b>chaque modification</b> d'une classe du modèle, il faut une nouvelle migration. On les lance dans la <b>Console du Gestionnaire de package</b> ou avec la <b>CLI</b> <code>dotnet ef</code>."},
+    {t:'table',head:["Commande (PMC)","Rôle"],rows:[
+      ["<code>Add-Migration &lt;Nom&gt;</code>","crée une migration et met à jour le snapshot"],
+      ["<code>Update-Database</code>","applique les migrations à la base (exécute <code>Up()</code>)"],
+      ["<code>Remove-Migration</code>","supprime la <b>dernière</b> migration, <b>si elle n'est pas appliquée</b>"],
+      ["<code>Script-Migration</code>","génère un <b>script SQL</b> à partir des migrations"],
+      ["<code>Update-Database &lt;Nom&gt;</code>","ramène la base à l'état après la migration <code>&lt;Nom&gt;</code>"],
+      ["<code>get-help Add-Migration</code>","affiche l'aide d'une commande"]]},
+    {t:'h',v:"Le contenu d'une migration"},
+    {t:'list',v:[
+      "<code>[Horodatage]_NomMigration.cs</code> : une classe avec <b>deux méthodes</b> : <code>Up()</code> applique les changements, <code>Down()</code> les <b>annule</b>.",
+      "<code>AppDbContextModelSnapshot.cs</code> : l'<b>état actuel</b> du modèle ; créé à la 1<sup>re</sup> migration, mis à jour à chaque suivante.",
+      "<code>__EFMigrationsHistory</code> : table créée à la 1<sup>re</sup> exécution ; <b>une ligne par migration appliquée</b>."]},
+    {t:'code',cap:"Exemple : ajouter Plafond dans Compte",v:R`public partial class AjoutPlafond : Migration
+{
+    protected override void Up(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.AddColumn<double>(
+            name: "Plafond", table: "Comptes", nullable: false, defaultValue: 0.0);
+    }
+
+    protected override void Down(MigrationBuilder migrationBuilder)
+    {
+        migrationBuilder.DropColumn(name: "Plafond", table: "Comptes");
+    }
+}`},
+    {t:'h',v:"Annuler une migration déjà appliquée"},
+    {t:'p',v:"<code>Remove-Migration</code> refuse une migration déjà appliquée : « <i>The migration '…' has already been applied to the database. Revert it and try again.</i> » Il faut d'abord <b>revenir en arrière</b>. Exemple avec 3 migrations appliquées, pour revenir à l'état après la 1<sup>re</sup> :"},
+    {t:'code',v:R`PM> Update-Database Migration_One    // la base revient à l'état après Migration_One (exécute Down())
+PM> Remove-Migration                  // supprime le fichier de Migration_Three
+PM> Remove-Migration                  // supprime le fichier de Migration_Two`},
+    {t:'note',kind:'tip',v:"<b class='t'>Équivalents CLI</b><code>dotnet ef migrations add Nom</code> · <code>dotnet ef database update</code> · <code>dotnet ef migrations remove</code> · <code>dotnet ef migrations script</code>."}
+  ],
+  qcm:[
+    {q:"Que contient la méthode <code>Down()</code> d'une migration ?",o:["Le code qui applique les changements","Le code qui annule les changements","Les données","La chaîne de connexion"],a:1,e:"Up applique, Down annule."},
+    {q:"Que fait <code>Script-Migration</code> ?",o:["Supprime la base","Génère un script SQL à partir des migrations","Crée les classes","Lance l'API"],a:1,e:"Utile pour donner le SQL à un administrateur de base."},
+    {q:"Remove-Migration sur une migration déjà appliquée…",o:["fonctionne","lève une erreur : il faut d'abord revenir en arrière avec Update-Database","supprime la base","ne fait rien"],a:1,e:"« has already been applied to the database. Revert it and try again »."},
+    {q:"Comment revenir à l'état après <code>Migration_One</code> ?",o:["<code>Remove-Migration Migration_One</code>","<code>Update-Database Migration_One</code>","<code>Add-Migration Migration_One</code>","<code>Drop-Database</code>"],a:1,e:"Update-Database avec le nom de la migration cible exécute les Down() nécessaires."},
+    {q:"Quel fichier garde l'état actuel du modèle ?",o:["<code>appsettings.json</code>","<code>AppDbContextModelSnapshot.cs</code>","<code>Program.cs</code>","<code>__EFMigrationsHistory</code>"],a:1,e:"Le snapshot sert de point de comparaison pour la migration suivante."},
+    {q:"Quand faut-il créer une nouvelle migration ?",o:["Seulement au début","À chaque modification des classes du modèle","À chaque lancement","Jamais"],a:1,e:"Sinon la base n'est plus synchronisée avec les classes."},
+    {q:"Que contient la table <code>__EFMigrationsHistory</code> ?",o:["Les erreurs","Une ligne par migration appliquée","Les comptes supprimés","Les requêtes HTTP"],a:1,e:"Elle évite de réappliquer une migration."}
+  ],
+  fills:[
+    {title:"Ajouter une colonne",desc:"Tu ajoutes la propriété Plafond dans Compte.",code:R`PM> ⟦Add-Migration⟧ AjoutPlafond
+PM> ⟦Update-Database⟧`},
+    {title:"Revenir en arrière de deux migrations",desc:"Migrations appliquées : Init, AjoutPlafond, AjoutVille. On veut revenir à Init.",code:R`PM> ⟦Update-Database⟧ ⟦Init⟧
+PM> ⟦Remove-Migration⟧
+PM> ⟦Remove-Migration⟧`},
+    {title:"Le fichier de migration",desc:"",code:R`protected override void ⟦Up⟧(MigrationBuilder migrationBuilder)
+{
+    migrationBuilder.⟦AddColumn⟧<double>(name: "Plafond", table: "Comptes", nullable: false, defaultValue: 0.0);
+}
+
+protected override void ⟦Down⟧(MigrationBuilder migrationBuilder)
+{
+    migrationBuilder.⟦DropColumn⟧(name: "Plafond", table: "Comptes");
+}`}
+  ],
+  writes:[
+    {title:"Question de cours : expliquer une migration",desc:"Quels fichiers sont créés par Add-Migration, et à quoi servent Up(), Down() et __EFMigrationsHistory ?",sol:R`// Add-Migration crée :
+//  - [Horodatage]_NomMigration.cs : classe avec Up() et Down()
+//      Up()   : applique les changements du modèle à la base (CreateTable, AddColumn...)
+//      Down() : annule ces changements (DropTable, DropColumn...)
+//  - AppDbContextModelSnapshot.cs : l'état actuel du modèle, mis à jour à chaque migration
+// Update-Database exécute Up() ; la table __EFMigrationsHistory garde
+// une ligne par migration appliquée, pour ne pas la réappliquer.`}
+  ]
+},
+/* ---------------------------------------------------------------- 6 */
+{
+  title:"Validation avancée",
+  pdf:"Chapitre 3 + Chapitre 5",
+  intro:"Toutes les annotations du cours, les messages d'erreur personnalisés, et la validation « métier » avec ModelState.AddModelError : très probable dans un devoir.",
+  cours:[
+    {t:'h',v:"Toutes les annotations du cours"},
+    {t:'table',head:["Annotation","Rôle"],rows:[
+      ["<code>[Required]</code>","champ obligatoire"],
+      ["<code>[StringLength(100, MinimumLength = 2)]</code>","longueur maximale (et minimale) d'une chaîne"],
+      ["<code>[MaxLength(50)]</code> / <code>[MinLength(2)]</code>","longueur maximale / minimale"],
+      ["<code>[Range(min, max)]</code>","valeur numérique entre min et max"],
+      ["<code>[RegularExpression(\"...\")]</code>","la valeur doit correspondre à l'expression"],
+      ["<code>[EmailAddress]</code>","format email"],
+      ["<code>[Phone]</code>","format téléphone"],
+      ["<code>[CreditCard]</code>","numéro de carte bancaire"],
+      ["<code>[Compare(\"Email\")]</code>","doit être égal à une autre propriété (ex. ConfirmEmail)"],
+      ["<code>[Display(Name = \"...\")]</code>","nom affiché du champ"],
+      ["<code>[CustomValidation]</code>","méthode de validation personnalisée"]]},
+    {t:'code',cap:"Messages d'erreur personnalisés",v:R`[Required(ErrorMessage = "Le nom est obligatoire")]
+[MaxLength(50, ErrorMessage = "Le nom ne peut pas dépasser 50 caractères")]
+public string Nom { get; set; }
+
+[EmailAddress(ErrorMessage = "Format d'email invalide")]
+public string Email { get; set; }
+
+[Compare("Email", ErrorMessage = "Les deux emails ne correspondent pas")]
+public string ConfirmEmail { get; set; }`},
+    {t:'h',v:"Qui vérifie les annotations ?"},
+    {t:'table',head:["","Web API (TP6)","MVC (chapitre 2-3)"],rows:[
+      ["Vérification","<b>automatique</b> grâce à <code>[ApiController]</code>","à la main : <code>if (ModelState.IsValid)</code>"],
+      ["Si invalide","400 Bad Request avec les erreurs, sans entrer dans l'action","on réaffiche la vue avec <code>asp-validation-for</code>"]]},
+    {t:'h',v:"Validation métier : ModelState.AddModelError"},
+    {t:'p',v:"Certaines règles ne peuvent pas s'écrire avec une annotation, parce qu'il faut <b>interroger la base</b> : « cet email est déjà utilisé », « ce numéro de compte existe déjà ». Le cours (chapitre 5) utilise <code>ModelState.AddModelError</code> :"},
+    {t:'code',cap:"Adapté au TP6 : le numéro de compte doit être unique",v:R`[HttpPost]
+public async Task<ActionResult<Compte>> CreateCompte(Compte c)
+{
+    var existe = await _repository.GetByNumero(c.NuméroCompte);
+    if (existe != null)
+    {
+        ModelState.AddModelError("NuméroCompte", "Ce numéro de compte existe déjà");
+        return BadRequest(ModelState);        // 400 avec le même format que les annotations
+    }
+
+    var compte = await _repository.Add(c);
+    return CreatedAtAction(nameof(GetCompte), new { id = compte.Id }, compte);
+}`},
+    {t:'note',kind:'key',v:"<b class='t'>BadRequest(ModelState) ou BadRequest(\"texte\")</b>Les deux renvoient 400. <code>BadRequest(ModelState)</code> renvoie les erreurs <b>par champ</b>, au même format que les annotations : c'est la version montrée dans le cours."}
+  ],
+  qcm:[
+    {q:"Quelle annotation vérifie que <code>ConfirmEmail</code> est égal à <code>Email</code> ?",o:["<code>[Required]</code>","<code>[Compare(\"Email\")]</code>","<code>[EmailAddress]</code>","<code>[Range]</code>"],a:1,e:"Compare compare deux propriétés du modèle."},
+    {q:"Comment personnaliser le message d'erreur de <code>[Required]</code> ?",o:["<code>[Required(\"msg\")]</code>","<code>[Required(ErrorMessage = \"msg\")]</code>","<code>[Required, Message = \"msg\"]</code>","Impossible"],a:1,e:"Le paramètre nommé <code>ErrorMessage</code>."},
+    {q:"Dans une Web API avec <code>[ApiController]</code>, faut-il tester <code>ModelState.IsValid</code> ?",o:["Oui, toujours","Non, la vérification est automatique (400)","Seulement pour POST","Seulement pour GET"],a:1,e:"[ApiController] renvoie 400 automatiquement."},
+    {q:"Pour refuser un numéro de compte déjà utilisé, on utilise…",o:["<code>[Unique]</code>","<code>ModelState.AddModelError(...)</code> puis <code>BadRequest(ModelState)</code>","<code>[Range]</code>","<code>NotFound()</code>"],a:1,e:"Il faut interroger la base : pas possible avec une annotation simple."},
+    {q:"Que limite <code>[StringLength(100, MinimumLength = 2)]</code> ?",o:["Un nombre entre 2 et 100","Une chaîne entre 2 et 100 caractères","100 lignes","Rien"],a:1,e:"Longueur min 2, max 100."},
+    {q:"Dans quel namespace sont les annotations ?",o:["<code>Microsoft.EntityFrameworkCore</code>","<code>System.ComponentModel.DataAnnotations</code>","<code>Microsoft.AspNetCore.Mvc</code>","<code>System.Linq</code>"],a:1,e:"System.ComponentModel.DataAnnotations."},
+    {q:"Quel code HTTP renvoie <code>BadRequest(ModelState)</code> ?",o:["200","201","400","404"],a:2,e:"400 Bad Request."}
+  ],
+  fills:[
+    {title:"Annotations avec messages",desc:"",code:R`public class Client
+{
+    public int Id { get; set; }
+
+    [⟦Required⟧(⟦ErrorMessage⟧ = "Le nom est obligatoire")]
+    [⟦MaxLength⟧(50)]
+    public string Nom { get; set; }
+
+    [⟦EmailAddress⟧(ErrorMessage = "Email invalide")]
+    public string Email { get; set; }
+
+    [⟦Compare⟧("Email")]
+    public string ConfirmEmail { get; set; }
+}`},
+    {title:"Validation métier : numéro unique",desc:"",code:R`var existe = await _repository.GetByNumero(c.NuméroCompte);
+if (existe ⟦!=⟧ null)
+{
+    ⟦ModelState⟧.⟦AddModelError⟧("NuméroCompte", "Ce numéro de compte existe déjà");
+    return ⟦BadRequest⟧(⟦ModelState⟧);
+}`}
+  ],
+  writes:[
+    {title:"Écris la validation « client existant » avec AddModelError",desc:"Dans CreateCompte : si c.ClientID ne correspond à aucun client, ajoute une erreur sur le champ ClientID et renvoie 400.",sol:R`if (!await _context.Clients.AnyAsync(cl => cl.Id == c.ClientID))
+{
+    ModelState.AddModelError("ClientID", "Ce client n'existe pas");
+    return BadRequest(ModelState);
+}`},
+    {title:"Écris la classe Client avec des messages d'erreur",desc:"Nom et Prenom obligatoires (max 50), Email obligatoire et valide, Tel au format téléphone : chacun avec un ErrorMessage en français.",sol:R`public class Client
+{
+    public int Id { get; set; }
+
+    [Required(ErrorMessage = "Le nom est obligatoire")]
+    [MaxLength(50, ErrorMessage = "50 caractères maximum")]
+    public string Nom { get; set; }
+
+    [Required(ErrorMessage = "Le prénom est obligatoire")]
+    [MaxLength(50, ErrorMessage = "50 caractères maximum")]
+    public string Prenom { get; set; }
+
+    [Required(ErrorMessage = "L'email est obligatoire")]
+    [EmailAddress(ErrorMessage = "Format d'email invalide")]
+    public string Email { get; set; }
+
+    [Phone(ErrorMessage = "Numéro de téléphone invalide")]
+    public string Tel { get; set; }
+
+    public string Adresse { get; set; }
+    public string? Image { get; set; }
+    public ICollection<Compte>? Compte { get; set; }
+}`}
+  ]
+},
+/* ---------------------------------------------------------------- 7 */
+{
+  title:"Le contrôleur API version cours",
+  pdf:"Chapitre 5",
+  intro:"Ce que le chapitre 5 ajoute au contrôleur du TP6 : try/catch et erreur 500, tous les codes HTTP, [FromBody], PUT et DELETE complets, et la recherche avec plusieurs critères.",
+  cours:[
+    {t:'h',v:"ControllerBase ou Controller"},
+    {t:'table',head:["Classe de base","Pour","Donne"],rows:[
+      ["<code>ControllerBase</code>","une <b>Web API</b> (TP6)","<code>Ok</code>, <code>NotFound</code>, <code>BadRequest</code>, <code>CreatedAtAction</code>, <code>StatusCode</code>…"],
+      ["<code>Controller</code>","une application <b>MVC</b> avec des vues","tout ControllerBase + <code>View()</code>"]]},
+    {t:'p',v:"Les deux sont dans <code>Microsoft.AspNetCore.Mvc</code>."},
+    {t:'h',v:"Tous les codes HTTP et leurs méthodes"},
+    {t:'table',head:["Code","Méthode","Sens"],rows:[
+      ["<b>200</b>","<code>Ok(...)</code>","succès"],
+      ["<b>201</b>","<code>CreatedAtAction(...)</code>","ressource créée"],
+      ["<b>204</b>","<code>NoContent()</code>","succès, rien à renvoyer"],
+      ["<b>400</b>","<code>BadRequest(...)</code>","requête invalide"],
+      ["<b>401</b>","<code>Unauthorized()</code>","non authentifié"],
+      ["<b>404</b>","<code>NotFound(...)</code>","introuvable"],
+      ["<b>500</b>","<code>StatusCode(StatusCodes.Status500InternalServerError, \"...\")</code>","erreur du serveur (ex. base inaccessible)"],
+      ["<b>501 / 503</b>","<code>StatusCode(...)</code>","non implémenté / service indisponible"]]},
+    {t:'p',v:"Familles : <b>2xx</b> = succès, <b>4xx</b> = erreur du client, <b>5xx</b> = erreur du serveur."},
+    {t:'h',v:"try / catch et erreur 500"},
+    {t:'p',v:"Dans le cours, chaque action est entourée d'un <code>try/catch</code> : si la base plante, l'API répond proprement <b>500</b> avec un message, au lieu d'une page d'erreur."},
+    {t:'code',v:R`[HttpGet]
+public async Task<ActionResult> GetComptes()
+{
+    try
+    {
+        return Ok(await _repository.GetAll());
+    }
+    catch (Exception)
+    {
+        return StatusCode(StatusCodes.Status500InternalServerError,
+            "Erreur lors de la récupération des données");
+    }
+}`},
+    {t:'h',v:"IActionResult, ActionResult et ActionResult<T>"},
+    {t:'list',v:[
+      "<code>IActionResult</code> : l'interface de tous les résultats d'action.",
+      "<code>ActionResult</code> : son implémentation par défaut ; ne précise pas le type des données.",
+      "<code>ActionResult&lt;Compte&gt;</code> : précise le type ; on peut alors écrire <code>return compte;</code> directement (équivaut à <code>Ok(compte)</code>), et Swagger connaît le format de la réponse."]},
+    {t:'h',v:"D'où viennent les paramètres : [FromBody], [FromQuery], [FromRoute]"},
+    {t:'p',v:"Avec <code>[ApiController]</code>, ASP.NET devine la source. On peut l'écrire explicitement, comme dans le cours :"},
+    {t:'code',v:R`public async Task<ActionResult<Compte>> CreateCompte([FromBody] Compte c)          // corps JSON
+public async Task<ActionResult> MAJVirement([FromQuery] int num1, [FromQuery] int num2,
+                                            [FromQuery] double montant)            // ?num1=...
+public async Task<ActionResult<Compte>> GetCompte([FromRoute] int id)               // /api/Compte/5`},
+    {t:'h',v:"CreatedAtAction fait 3 choses"},
+    {t:'list',v:["Renvoie le code <b>201</b>.","Renvoie la <b>ressource créée</b> dans le corps.","Ajoute l'en-tête <b>Location</b> avec l'URI de la nouvelle ressource (<code>/api/Compte/7</code>)."]},
+    {t:'p',v:"On écrit <code>nameof(GetCompte)</code> plutôt que la chaîne <code>\"GetCompte\"</code> : si on renomme la méthode, le compilateur le signale."},
+    {t:'h',v:"PUT et DELETE version cours"},
+    {t:'code',v:R`[HttpPut("{id:int}")]
+public async Task<ActionResult<Compte>> UpdateCompte(int id, Compte c)
+{
+    try
+    {
+        if (id != c.Id)
+            return BadRequest("L'id ne correspond pas");
+
+        var aModifier = await _repository.GetById(id);
+        if (aModifier == null)
+            return NotFound($"Le compte {id} n'existe pas");      // $"..." insère la valeur de id
+
+        return await _repository.update(c);
+    }
+    catch (Exception)
+    {
+        return StatusCode(StatusCodes.Status500InternalServerError, "Erreur de mise à jour");
+    }
+}`},
+    {t:'note',kind:'tip',v:"<b class='t'>L'interpolation $\"...\"</b><code>$\"Le compte {id} n'existe pas\"</code> remplace <code>{id}</code> par sa valeur : « Le compte 7 n'existe pas »."},
+    {t:'h',v:"La recherche avec plusieurs critères (IQueryable)"},
+    {t:'code',cap:"Repository : on ajoute un Where seulement si le critère est donné",v:R`public async Task<IEnumerable<Compte>> Search(int? clientId, string? typeCompte)
+{
+    IQueryable<Compte> query = _context.Comptes;
+
+    if (clientId != null)
+        query = query.Where(c => c.ClientID == clientId);
+
+    if (!string.IsNullOrEmpty(typeCompte))
+        query = query.Where(c => c.TypeCompte.Contains(typeCompte));
+
+    return await query.ToListAsync();          // le SQL n'est exécuté qu'ici
+}`},
+    {t:'code',cap:"Contrôleur",v:R`[HttpGet("search")]
+public async Task<ActionResult<IEnumerable<Compte>>> Search(int? clientId, string? typeCompte)
+{
+    try
+    {
+        var result = await _repository.Search(clientId, typeCompte);
+        if (result.Any())
+            return Ok(result);
+        return NotFound();
+    }
+    catch (Exception)
+    {
+        return StatusCode(StatusCodes.Status500InternalServerError, "Erreur de recherche");
+    }
+}
+// GET /api/Compte/search?clientId=1&typeCompte=Epargne`},
+    {t:'list',v:[
+      "<code>int?</code> : paramètre <b>optionnel</b> (peut être null).",
+      "<code>string.IsNullOrEmpty(x)</code> : vrai si la chaîne est null ou vide.",
+      "<code>.Contains(\"Ep\")</code> : la chaîne contient « Ep » (équivaut à <code>LIKE '%Ep%'</code>).",
+      "<code>result.Any()</code> : vrai s'il y a au moins un élément."]}
+  ],
+  qcm:[
+    {q:"De quelle classe hérite un contrôleur Web API ?",o:["<code>Controller</code>","<code>ControllerBase</code>","<code>DbContext</code>","<code>ApiController</code>"],a:1,e:"<code>Controller</code> est pour MVC (avec des vues)."},
+    {q:"Comment renvoyer une erreur 500 ?",o:["<code>return Error500();</code>","<code>return StatusCode(StatusCodes.Status500InternalServerError, \"msg\");</code>","<code>return BadRequest(500);</code>","<code>throw 500;</code>"],a:1,e:"Il n'y a pas de méthode dédiée : on utilise StatusCode."},
+    {q:"Quel code pour « succès, mais rien à renvoyer » ?",o:["200","201","204 (<code>NoContent()</code>)","404"],a:2,e:"204 No Content."},
+    {q:"Lequel n'est <b>pas</b> fait par <code>CreatedAtAction</code> ?",o:["Renvoyer 201","Renvoyer la ressource créée","Ajouter l'en-tête Location","Enregistrer la ressource dans la base"],a:3,e:"L'enregistrement est fait par le repository, avant."},
+    {q:"Pourquoi <code>nameof(GetCompte)</code> au lieu de <code>\"GetCompte\"</code> ?",o:["C'est plus rapide","Le compilateur vérifie le nom (erreur si la méthode est renommée)","C'est obligatoire","Pour Swagger"],a:1,e:"Évite les fautes de frappe dans une chaîne."},
+    {q:"Que renvoie <code>$\"Compte {id} introuvable\"</code> avec id = 7 ?",o:["<code>Compte {id} introuvable</code>","<code>Compte 7 introuvable</code>","Une erreur","<code>$Compte 7</code>"],a:1,e:"C'est l'interpolation de chaîne."},
+    {q:"Dans la recherche, pourquoi <code>IQueryable</code> ?",o:["Pour exécuter le SQL tout de suite","Pour ajouter des Where selon les critères, avant d'exécuter une seule requête","Parce que IEnumerable n'existe pas","Pour trier"],a:1,e:"La requête se construit progressivement, puis ToListAsync l'exécute."},
+    {q:"Que veut dire <code>int? clientId</code> en paramètre ?",o:["clientId obligatoire","clientId optionnel (peut être null)","clientId négatif","Erreur"],a:1,e:"Le <code>?</code> rend le type nullable."},
+    {q:"Avec <code>[ApiController]</code>, <code>[FromBody]</code> est-il obligatoire pour un objet ?",o:["Oui","Non, c'est déduit automatiquement","Seulement pour PUT","Seulement pour GET"],a:1,e:"Le cours le précise : pas obligatoire avec [ApiController]."}
+  ],
+  fills:[
+    {title:"try / catch avec erreur 500",desc:"",code:R`[HttpGet("{id:int}")]
+public async Task<ActionResult<Compte>> GetCompte(int id)
+{
+    ⟦try⟧
+    {
+        var result = await _repository.GetById(id);
+        if (result == null) return ⟦NotFound⟧();
+        return result;
+    }
+    ⟦catch⟧ (⟦Exception⟧)
+    {
+        return ⟦StatusCode⟧(StatusCodes.⟦Status500InternalServerError⟧, "Erreur de lecture");
+    }
+}`},
+    {title:"La recherche avec IQueryable",desc:"",code:R`public async Task<IEnumerable<Compte>> Search(int? clientId, string? typeCompte)
+{
+    ⟦IQueryable<Compte>⟧ query = _context.Comptes;
+
+    if (clientId ⟦!=⟧ null)
+        query = query.⟦Where⟧(c => c.ClientID == clientId);
+
+    if (!string.⟦IsNullOrEmpty⟧(typeCompte))
+        query = query.Where(c => c.TypeCompte.⟦Contains⟧(typeCompte));
+
+    return await query.⟦ToListAsync⟧();
+}`},
+    {title:"CreatedAtAction",desc:"",code:R`var compte = await _repository.Add(c);
+return ⟦CreatedAtAction⟧(⟦nameof⟧(GetCompte), new { ⟦id⟧ = compte.Id }, compte);`}
+  ],
+  writes:[
+    {title:"Écris DeleteCompte version cours",desc:"try/catch ; 404 avec message interpolé si le compte n'existe pas ; sinon supprimer et renvoyer le compte ; 500 en cas d'exception.",sol:R`[HttpDelete("{id:int}")]
+public async Task<ActionResult<Compte>> DeleteCompte(int id)
+{
+    try
+    {
+        var aSupprimer = await _repository.GetById(id);
+        if (aSupprimer == null)
+            return NotFound($"Le compte {id} n'existe pas");
+
+        return await _repository.Delete(id);
+    }
+    catch (Exception)
+    {
+        return StatusCode(StatusCodes.Status500InternalServerError, "Erreur de suppression");
+    }
+}`},
+    {title:"Écris une recherche d'opérations",desc:"Repository : Search_Operations(int? compteId, string? type) avec IQueryable. Contrôleur : route operations/search, 404 si aucun résultat.",sol:R`// Repository
+public async Task<IEnumerable<Operation>> Search_Operations(int? compteId, string? type)
+{
+    IQueryable<Operation> query = _context.Operations;
+    if (compteId != null)
+        query = query.Where(o => o.CompteID == compteId);
+    if (!string.IsNullOrEmpty(type))
+        query = query.Where(o => o.TypeOperation == type);
+    return await query.OrderBy(o => o.DateOperation).ToListAsync();
+}
+
+// Contrôleur
+[HttpGet("operations/search")]
+public async Task<ActionResult<IEnumerable<Operation>>> SearchOperations(int? compteId, string? type)
+{
+    try
+    {
+        var result = await _repository.Search_Operations(compteId, type);
+        if (result.Any()) return Ok(result);
+        return NotFound();
+    }
+    catch (Exception)
+    {
+        return StatusCode(StatusCodes.Status500InternalServerError, "Erreur de recherche");
+    }
+}`}
+  ]
+},
+/* ---------------------------------------------------------------- 8 */
+{
+  title:"Bonus : sécuriser avec Identity",
+  pdf:"Chapitre 4",
+  intro:"Moins probable pour un devoir sur le TP6, mais une question de cours est possible : les étapes pour ajouter Identity et protéger des actions avec [Authorize].",
+  cours:[
+    {t:'h',v:"ASP.NET Core Identity"},
+    {t:'p',v:"<b>Identity</b> est une API intégrée à ASP.NET Core pour gérer les <b>utilisateurs</b>, les <b>mots de passe</b>, les <b>rôles</b>, la connexion et la déconnexion. Elle stocke tout dans la base avec EF Core."},
+    {t:'h',v:"Les étapes pour l'ajouter"},
+    {t:'list',v:[
+      "① Installer le package <code>Microsoft.AspNetCore.Identity.EntityFrameworkCore</code>.",
+      "② Faire hériter le contexte de <code>IdentityDbContext</code> au lieu de <code>DbContext</code>.",
+      "③ Inscrire les services Identity dans Program.cs.",
+      "④ Ajouter <code>app.UseAuthentication()</code> <b>avant</b> <code>app.UseAuthorization()</code>.",
+      "⑤ Lancer une migration : EF crée les tables Identity (<code>AspNetUsers</code>, <code>AspNetRoles</code>…)."]},
+    {t:'code',v:R`public class AppDbContext : IdentityDbContext          // ② au lieu de DbContext
+{
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+    public DbSet<Compte> Comptes { get; set; }
+}
+
+// ③ Program.cs
+builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+       .AddEntityFrameworkStores<AppDbContext>();
+
+// ④ pipeline
+app.UseAuthentication();
+app.UseAuthorization();
+
+// ⑤ Console du Gestionnaire de package
+// PM> Add-Migration AjoutIdentity
+// PM> Update-Database`},
+    {t:'h',v:"Les classes à connaître"},
+    {t:'table',head:["Classe","Rôle","Méthodes"],rows:[
+      ["<code>IdentityUser</code>","un utilisateur","<code>UserName</code>, <code>Email</code>…"],
+      ["<code>IdentityRole</code>","un rôle (Admin, Client…)","<code>Name</code>"],
+      ["<code>UserManager&lt;IdentityUser&gt;</code>","gérer les utilisateurs","<code>CreateAsync</code>, <code>DeleteAsync</code>, <code>UpdateAsync</code>"],
+      ["<code>SignInManager&lt;IdentityUser&gt;</code>","connexion / déconnexion","<code>SignInAsync</code>, <code>PasswordSignInAsync</code>, <code>SignOutAsync</code>"]]},
+    {t:'h',v:"Protéger des actions"},
+    {t:'code',v:R`[Authorize]                         // tout le contrôleur exige un utilisateur connecté
+public class CompteController : ControllerBase
+{
+    [AllowAnonymous]                // sauf cette action, ouverte à tous
+    [HttpGet]
+    public async Task<ActionResult> GetComptes() { ... }
+
+    [Authorize(Roles = "Admin")]    // réservée au rôle Admin
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> DeleteCompte(int id) { ... }
+}`},
+    {t:'note',kind:'warn',v:"<b class='t'>Pour une API</b>Le chapitre 4 montre Identity avec des pages MVC (Register, Login) et des cookies. Une vraie API utilise plutôt des jetons (JWT), hors programme ici. Retiens surtout les 5 étapes et <code>[Authorize]</code> / <code>[AllowAnonymous]</code>."}
+  ],
+  qcm:[
+    {q:"De quelle classe hérite le contexte quand on ajoute Identity ?",o:["<code>DbContext</code>","<code>IdentityDbContext</code>","<code>IdentityUser</code>","<code>ControllerBase</code>"],a:1,e:"IdentityDbContext ajoute les tables des utilisateurs et des rôles."},
+    {q:"Quelle classe crée un utilisateur avec <code>CreateAsync</code> ?",o:["<code>SignInManager</code>","<code>UserManager</code>","<code>IdentityRole</code>","<code>AppDbContext</code>"],a:1,e:"UserManager gère les utilisateurs ; SignInManager gère la connexion."},
+    {q:"Que fait <code>[Authorize]</code> sur un contrôleur ?",o:["Rien","Exige un utilisateur connecté pour toutes ses actions","Crée un utilisateur","Supprime les rôles"],a:1,e:"Sans connexion : 401."},
+    {q:"Comment ouvrir une action à tous dans un contrôleur <code>[Authorize]</code> ?",o:["<code>[Public]</code>","<code>[AllowAnonymous]</code>","<code>[NoAuth]</code>","Impossible"],a:1,e:"AllowAnonymous l'emporte sur Authorize."},
+    {q:"Après avoir ajouté Identity, que faut-il faire pour créer ses tables ?",o:["Rien","Une migration (Add-Migration + Update-Database)","Redémarrer Visual Studio","Scaffold-DbContext"],a:1,e:"Les tables AspNetUsers, AspNetRoles… viennent d'une migration."}
+  ],
+  fills:[
+    {title:"Ajouter Identity",desc:"",code:R`public class AppDbContext : ⟦IdentityDbContext⟧
+{
+    public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
+}
+
+builder.Services.⟦AddIdentity⟧<⟦IdentityUser⟧, ⟦IdentityRole⟧>()
+       .AddEntityFrameworkStores<AppDbContext>();
+
+app.⟦UseAuthentication⟧();
+app.UseAuthorization();`},
+    {title:"Protéger les actions",desc:"",code:R`[⟦Authorize⟧]
+public class CompteController : ControllerBase
+{
+    [⟦AllowAnonymous⟧]
+    [HttpGet]
+    public async Task<ActionResult> GetComptes() { ... }
+
+    [Authorize(⟦Roles⟧ = "Admin")]
+    [HttpDelete("{id:int}")]
+    public async Task<ActionResult> DeleteCompte(int id) { ... }
+}`}
+  ],
+  writes:[
+    {title:"Question de cours : les étapes pour ajouter Identity",desc:"Liste les étapes dans l'ordre.",sol:R`// 1. Installer Microsoft.AspNetCore.Identity.EntityFrameworkCore
+// 2. AppDbContext hérite de IdentityDbContext (au lieu de DbContext)
+// 3. Program.cs : builder.Services.AddIdentity<IdentityUser, IdentityRole>()
+//                        .AddEntityFrameworkStores<AppDbContext>();
+// 4. Pipeline : app.UseAuthentication(); avant app.UseAuthorization();
+// 5. Add-Migration AjoutIdentity puis Update-Database (tables AspNetUsers, AspNetRoles...)
+// 6. Protéger les actions avec [Authorize] (et [AllowAnonymous] pour les exceptions)`}
+  ]
+},
+/* ---------------------------------------------------------------- 9 */
+{
+  title:"Clean Architecture (TP7)",
+  pdf:"TP7 API Clean Architecture",
+  intro:"Le dernier chapitre : découper l'API en 4 couches (Domain, Application, Infrastructure, Présentation) avec des DTO et une couche service. Exemple du cours : la gestion de produits. On l'applique aussi au TP6.",
+  cours:[
+    {t:'h',v:"Définition"},
+    {t:'p',v:"La <b>Clean Architecture</b> est une philosophie de conception qui organise le code en <b>couches distinctes</b> avec des <b>responsabilités claires</b>. Idée clé : <b>séparer les préoccupations</b> pour que chaque couche soit indépendante ; une modification dans une partie a un impact <b>minimal, voire nul</b>, sur les autres."},
+    {t:'note',kind:'tip',v:"<b class='t'>L'image du cours : la boulangerie</b><b>Fortement couplé</b> : four → pétrin → emballage ; si le pétrin tombe en panne, <b>tout s'arrête</b>. <b>Clean Architecture</b> : chaque machine fonctionne indépendamment ; la panne reste <b>isolée</b>."},
+    {t:'h',v:"Les avantages"},
+    {t:'list',v:["<b>Séparation des préoccupations</b> (Separation of Concerns)","<b>Testabilité</b>","<b>Maintenabilité et extensibilité</b>","<b>Flexibilité</b>","<b>Indépendance vis-à-vis des frameworks</b>","<b>Meilleure qualité du code</b>"]},
+    {t:'h',v:"Les 4 couches (du centre vers l'extérieur)"},
+    {t:'table',head:["Couche","Projet du TP7","Contient","Rôle"],rows:[
+      ["<b>Domain</b> (le cœur)","<code>DomainLayer</code> (bibliothèque de classes)","dossier <code>Entities</code> : <code>Product</code>","entités + <b>règles métier</b> ; ne dépend de <b>rien</b>"],
+      ["<b>Application</b>","<code>ApplicationLayer</code> (bibliothèque de classes)","<code>DTOs/</code>, <code>Interfaces/Repositories</code>, <code>Interfaces/Services</code>, <code>Services/</code>","cas d'utilisation : interfaces repository et service, implémentations des services, DTO"],
+      ["<b>Infrastructure</b>","<code>InfrastructureLayer</code> (bibliothèque de classes)","<code>Data/ApplicationDbContext</code>, <code>Repositories/ProductRepository</code>","dépendances externes : base de données (EF Core), emails, logs, API externes"],
+      ["<b>Présentation</b> (Web API)","<code>ProductsAPI</code> (ASP.NET Core Web API)","<code>Controllers/ProductController</code>, <code>Program.cs</code>, <code>appsettings.json</code>","pont avec l'extérieur : HTTP, JSON, validation, sécurité"]]},
+    {t:'h',v:"Les références entre projets"},
+    {t:'table',head:["Projet","Référence","Pourquoi"],rows:[
+      ["Domain","<b>aucun</b>","le cœur ne dépend de personne"],
+      ["Application","Domain","utilise les entités"],
+      ["Infrastructure","Application + Domain","implémente les interfaces de l'Application"],
+      ["API","Application + Infrastructure","injecte les services et inscrit les implémentations"]]},
+    {t:'note',kind:'key',v:"<b class='t'>La règle des dépendances</b>Les dépendances vont toujours <b>vers le centre</b> (vers le Domain). Les <b>interfaces</b> sont dans Application, leurs <b>implémentations</b> dans Infrastructure : on peut changer de base sans toucher à la logique métier."},
+    {t:'h',v:"Domain : entité avec règles métier"},
+    {t:'code',v:R`public class Product
+{
+    public int Id { get; set; }
+    [Required, StringLength(100, MinimumLength = 2)]
+    public string Name { get; set; } = null!;
+    [StringLength(500)]
+    public string? Description { get; set; }
+    [Column(TypeName = "decimal(18,2)")]          // type SQL exact pour un prix
+    public decimal Price { get; set; }
+    [Range(0, int.MaxValue, ErrorMessage = "Stock cannot be negative.")]
+    public int Stock { get; set; }
+
+    // Règle métier : prix positif, stock non négatif
+    public void ValidateBusinessRules()
+    {
+        if (Price <= 0)
+            throw new InvalidOperationException("Product price must be positive.");
+        if (Stock < 0)
+            throw new InvalidOperationException("Product stock cannot be negative.");
+    }
+}`},
+    {t:'list',v:["<code>= null!;</code> : « cette propriété ne sera pas null » (évite l'avertissement de nullabilité).","<code>decimal</code> + <code>[Column(TypeName = \"decimal(18,2)\")]</code> : le bon type pour l'argent (18 chiffres dont 2 décimales).","<code>throw new InvalidOperationException(...)</code> : refuse une opération qui viole une règle métier."]},
+    {t:'h',v:"Application : les DTO"},
+    {t:'p',v:"Un <b>DTO</b> (Data Transfer Object) est une classe qui sert seulement à <b>transporter des données</b> entre les couches. On n'expose pas l'entité directement : chaque usage a son DTO, avec <b>sa propre validation</b>."},
+    {t:'table',head:["DTO","Utilisé pour","Particularité"],rows:[
+      ["<code>ProductDTO</code>","les réponses (GET)","toutes les propriétés, sans annotation"],
+      ["<code>CreateProductDTO</code>","le POST","<b>pas d'Id</b> (généré par la base) ; annotations avec ErrorMessage"],
+      ["<code>UpdateProductDTO</code>","le PUT","<code>[Required] Id</code> + les mêmes annotations"]]},
+    {t:'h',v:"Application : interfaces et service"},
+    {t:'code',v:R`public interface IProductRepository            // Interfaces/Repositories : travaille avec l'ENTITÉ
+{
+    Task<IEnumerable<Product>> GetAllAsync();
+    Task<Product?> GetByIdAsync(int id);
+    Task<Product?> AddAsync(Product product);
+    Task UpdateAsync(Product product);
+    Task DeleteAsync(int id);
+}
+
+public interface IProductService               // Interfaces/Services : travaille avec les DTO
+{
+    Task<IEnumerable<ProductDTO>> GetAllProductsAsync();
+    Task<ProductDTO?> GetProductByIdAsync(int id);
+    Task<ProductDTO?> AddProductAsync(CreateProductDTO productDto);
+    Task UpdateProductAsync(UpdateProductDTO productDto);
+    Task DeleteProductAsync(int id);
+}`},
+    {t:'code',cap:"ProductService : convertit DTO ↔ entité, applique les règles, appelle le repository",v:R`public class ProductService : IProductService
+{
+    private readonly IProductRepository _repository;
+    public ProductService(IProductRepository repository) { _repository = repository; }
+
+    private ProductDTO MapToDTO(Product product)          // entité → DTO
+    {
+        return new ProductDTO { Id = product.Id, Name = product.Name,
+            Description = product.Description, Price = product.Price, Stock = product.Stock };
+    }
+
+    public async Task<IEnumerable<ProductDTO>> GetAllProductsAsync()
+    {
+        var products = await _repository.GetAllAsync();
+        var dtos = new List<ProductDTO>();
+        foreach (var product in products)
+            dtos.Add(MapToDTO(product));
+        return dtos;
+    }
+
+    public async Task<ProductDTO?> AddProductAsync(CreateProductDTO productDto)
+    {
+        var product = new Product                          // DTO → entité
+        {
+            Name = productDto.Name, Description = productDto.Description,
+            Price = productDto.Price, Stock = productDto.Stock
+        };
+        product.ValidateBusinessRules();                   // règle métier du Domain
+        var newProduct = await _repository.AddAsync(product);
+        return newProduct != null ? MapToDTO(newProduct) : null;
+    }
+
+    public async Task UpdateProductAsync(UpdateProductDTO productDto)
+    {
+        var product = await _repository.GetByIdAsync(productDto.Id);
+        if (product == null) throw new Exception("Product not found.");
+        product.Name = productDto.Name;
+        product.Description = productDto.Description;
+        product.Price = productDto.Price;
+        product.Stock = productDto.Stock;
+        product.ValidateBusinessRules();
+        await _repository.UpdateAsync(product);
+    }
+
+    public async Task DeleteProductAsync(int id) => await _repository.DeleteAsync(id);
+}`},
+    {t:'h',v:"Infrastructure : DbContext avec données initiales, repository"},
+    {t:'code',v:R`public class ApplicationDbContext : DbContext
+{
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        base.OnModelCreating(modelBuilder);
+        modelBuilder.Entity<Product>().HasData(                 // données insérées par la migration
+            new Product { Id = 1, Name = "Laptop", Description = "High-end gaming laptop", Price = 1500.00m, Stock = 10 },
+            new Product { Id = 2, Name = "Smartphone", Description = "Latest model smartphone", Price = 800.00m, Stock = 25 });
+    }
+    public DbSet<Product> Products { get; set; } = null!;
+}
+
+public class ProductRepository : IProductRepository
+{
+    private readonly ApplicationDbContext _context;
+    public ProductRepository(ApplicationDbContext context) { _context = context; }
+
+    public async Task<IEnumerable<Product>> GetAllAsync()
+        => await _context.Products.AsNoTracking().ToListAsync();     // lecture seule : plus rapide
+
+    public async Task<Product?> GetByIdAsync(int id)
+        => await _context.Products.AsNoTracking().FirstOrDefaultAsync(prd => prd.Id == id);
+
+    public async Task<Product?> AddAsync(Product product)
+    {
+        await _context.Products.AddAsync(product);
+        await _context.SaveChangesAsync();
+        return product;
+    }
+    public async Task UpdateAsync(Product product)
+    {
+        _context.Products.Update(product);
+        await _context.SaveChangesAsync();
+    }
+    public async Task DeleteAsync(int id)
+    {
+        var product = await _context.Products.FindAsync(id);
+        if (product != null) { _context.Products.Remove(product); await _context.SaveChangesAsync(); }
+    }
+}`},
+    {t:'list',v:["<code>OnModelCreating</code> + <code>HasData(...)</code> : <b>seeding</b>, des données de départ ajoutées par la migration.","<code>1500.00m</code> : le <code>m</code> indique un nombre <code>decimal</code>.","<code>AsNoTracking()</code> : EF ne suit pas les objets lus (lecture seule) → plus rapide.","<code>=&gt;</code> après une méthode : corps en une seule expression (raccourci de <code>{ return ...; }</code>)."]},
+    {t:'h',v:"Présentation : contrôleur, Program.cs, migration"},
+    {t:'code',v:R`[Route("api/[controller]")]
+[ApiController]
+public class ProductController : ControllerBase
+{
+    private readonly IProductService _service;              // le contrôleur parle au SERVICE
+    public ProductController(IProductService service) { _service = service; }
+
+    [HttpGet]
+    public async Task<IEnumerable<ProductDTO>> Get() => await _service.GetAllProductsAsync();
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ProductDTO>> Get(int id)
+    {
+        var product = await _service.GetProductByIdAsync(id);
+        if (product == null) return NotFound();
+        return Ok(product);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post(CreateProductDTO productDto)
+        => Ok(await _service.AddProductAsync(productDto));
+
+    [HttpPut("{id}")]
+    public async Task<IActionResult> Put(UpdateProductDTO productDto)
+    {
+        await _service.UpdateProductAsync(productDto);
+        return NoContent();                                 // 204
+    }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _service.DeleteProductAsync(id);
+        return NoContent();
+    }
+}
+
+// Program.cs (projet API)
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddScoped<IProductRepository, ProductRepository>();
+builder.Services.AddScoped<IProductService, ProductService>();`},
+    {t:'table',head:["Étape de migration (TP7)","Où"],rows:[
+      ["Projet de <b>démarrage</b> = le projet <b>API</b>","propriétés de la solution"],
+      ["Projet <b>par défaut</b> de la console = <b>Infrastructure</b> (il contient le DbContext)","Console du Gestionnaire de package"],
+      ["<code>add-migration dbcreate</code> puis <code>update-database</code>","Console du Gestionnaire de package"],
+      ["Tester les endpoints","Swagger"]]},
+    {t:'h',v:"Appliquer au TP6"},
+    {t:'table',head:["Couche","Ce que deviendrait le TP6"],rows:[
+      ["Domain","<code>Client</code>, <code>Compte</code>, <code>Operation</code> + une règle métier <code>Compte.Retirer(montant)</code> qui refuse un solde insuffisant"],
+      ["Application","<code>CompteDTO</code>, <code>CreateCompteDTO</code>, <code>ICompteRepository</code>, <code>ICompteService</code>, <code>CompteService</code>"],
+      ["Infrastructure","<code>AppDbContext</code>, <code>CompteRepository</code>, les migrations"],
+      ["API","<code>CompteController</code> qui reçoit <code>ICompteService</code>, <code>Program.cs</code>, <code>appsettings.json</code>"]]}
+  ],
+  qcm:[
+    {q:"Quelle est l'idée clé de la Clean Architecture ?",o:["Tout mettre dans le contrôleur","Séparer les préoccupations en couches indépendantes","Supprimer la base de données","Utiliser un seul projet"],a:1,e:"Chaque couche a une responsabilité claire et reste indépendante."},
+    {q:"Combien de couches dans la Clean Architecture du cours ?",o:["2","3","4","5"],a:2,e:"Domain, Application, Infrastructure, Présentation (Web API)."},
+    {q:"Quelle couche ne dépend d'<b>aucune</b> autre ?",o:["Application","Infrastructure","Domain","API"],a:2,e:"Le Domain est le cœur : les dépendances vont vers lui."},
+    {q:"Où se trouve l'interface <code>IProductRepository</code> ?",o:["Domain","Application","Infrastructure","API"],a:1,e:"Les interfaces sont dans Application ; leurs implémentations dans Infrastructure."},
+    {q:"Où se trouve <code>ProductRepository</code> (la classe) ?",o:["Domain","Application","Infrastructure","API"],a:2,e:"Elle utilise EF Core : c'est une dépendance externe → Infrastructure."},
+    {q:"Où se trouve <code>ApplicationDbContext</code> ?",o:["Domain","Application","Infrastructure","API"],a:2,e:"Infrastructure, dossier Data."},
+    {q:"Qu'est-ce qu'un DTO ?",o:["Une table","Un objet qui transporte des données entre les couches","Un contrôleur","Une migration"],a:1,e:"Data Transfer Object."},
+    {q:"Pourquoi <code>CreateProductDTO</code> n'a pas d'<code>Id</code> ?",o:["Oubli du cours","L'Id est généré par la base à la création","Les DTO n'ont jamais d'Id","Pour Swagger"],a:1,e:"Le client n'a pas à fournir l'Id d'un nouveau produit."},
+    {q:"Le contrôleur du TP7 reçoit par injection…",o:["ApplicationDbContext","IProductRepository","IProductService","ProductRepository"],a:2,e:"Le contrôleur parle au service, qui parle au repository."},
+    {q:"Que fait <code>MapToDTO</code> ?",o:["Crée une migration","Convertit une entité Product en ProductDTO","Valide le prix","Supprime un produit"],a:1,e:"Il copie les propriétés de l'entité dans un DTO."},
+    {q:"Que fait <code>HasData(...)</code> dans <code>OnModelCreating</code> ?",o:["Supprime des données","Ajoute des données initiales (seeding) via la migration","Crée un index","Rien"],a:1,e:"Les produits Laptop, Smartphone… sont insérés par update-database."},
+    {q:"Que fait <code>AsNoTracking()</code> ?",o:["Désactive la base","Lit sans suivi des modifications (lecture seule, plus rapide)","Supprime le cache","Trie"],a:1,e:"Utile pour les lectures."},
+    {q:"Pour la migration du TP7, quel projet choisir comme projet par défaut dans la console ?",o:["API","Domain","Infrastructure","Application"],a:2,e:"Il contient le DbContext. Le projet de démarrage reste l'API."},
+    {q:"Que renvoie <code>NoContent()</code> ?",o:["200","201","204","404"],a:2,e:"Succès sans corps de réponse : utilisé pour PUT et DELETE dans le TP7."},
+    {q:"Quelles références a le projet API ?",o:["Aucune","Domain seulement","Application et Infrastructure","Infrastructure seulement"],a:2,e:"API → Application + Infrastructure ; Infrastructure → Application + Domain ; Application → Domain."},
+    {q:"Pourquoi <code>[Column(TypeName = \"decimal(18,2)\")]</code> sur Price ?",o:["Pour la validation","Pour fixer le type SQL exact d'un montant","Pour Swagger","C'est obligatoire pour tout decimal"],a:1,e:"18 chiffres dont 2 décimales : adapté à l'argent."}
+  ],
+  fills:[
+    {title:"Placer chaque élément dans sa couche",desc:"Écris Domain, Application, Infrastructure ou API.",code:R`// Product (entité + ValidateBusinessRules)        → ⟦Domain⟧
+// ProductDTO, CreateProductDTO                      → ⟦Application⟧
+// IProductRepository, IProductService               → ⟦Application⟧
+// ProductService                                    → ⟦Application⟧
+// ApplicationDbContext, ProductRepository           → ⟦Infrastructure⟧
+// ProductController, Program.cs                     → ⟦API⟧`},
+    {title:"Program.cs du TP7",desc:"",code:R`builder.Services.AddDbContext<⟦ApplicationDbContext⟧>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("⟦DefaultConnection⟧")));
+builder.Services.AddScoped<⟦IProductRepository⟧, ProductRepository>();
+builder.Services.AddScoped<IProductService, ⟦ProductService⟧>();`},
+    {title:"Le service : ajouter un produit",desc:"",code:R`public async Task<ProductDTO?> AddProductAsync(⟦CreateProductDTO⟧ productDto)
+{
+    var product = new ⟦Product⟧
+    {
+        Name = productDto.Name,
+        Price = productDto.⟦Price⟧,
+        Stock = productDto.Stock
+    };
+    product.⟦ValidateBusinessRules⟧();
+    var newProduct = await _repository.⟦AddAsync⟧(product);
+    return newProduct != null ? ⟦MapToDTO⟧(newProduct) : null;
+}`},
+    {title:"Seeding et lecture seule",desc:"",code:R`protected override void ⟦OnModelCreating⟧(ModelBuilder modelBuilder)
+{
+    base.OnModelCreating(modelBuilder);
+    modelBuilder.Entity<Product>().⟦HasData⟧(
+        new Product { Id = 1, Name = "Laptop", Price = 1500.00m, Stock = 10 });
+}
+
+public async Task<IEnumerable<Product>> GetAllAsync()
+    => await _context.Products.⟦AsNoTracking⟧().ToListAsync();`}
+  ],
+  writes:[
+    {title:"Question de cours : les 4 couches",desc:"Nomme les 4 couches et donne le contenu de chacune.",sol:R`// 1. Domain (cœur) : les entités (Product) et les règles métier (ValidateBusinessRules).
+//    Ne dépend d'aucune autre couche.
+// 2. Application : les DTO, les interfaces repository (IProductRepository)
+//    et service (IProductService), les implémentations des services (ProductService).
+// 3. Infrastructure : les dépendances externes : DbContext EF Core (ApplicationDbContext),
+//    implémentations des repositories (ProductRepository), emails, logs, API externes.
+// 4. Présentation (Web API) : contrôleurs API, Program.cs, appsettings.json ;
+//    gère HTTP/JSON, la validation des entrées et la sécurité.`},
+    {title:"Écris CompteDTO et CreateCompteDTO pour le TP6",desc:"CompteDTO : Id, NuméroCompte, Solde, TypeCompte, ClientID. CreateCompteDTO : sans Id, avec annotations.",sol:R`public class CompteDTO
+{
+    public int Id { get; set; }
+    public int NuméroCompte { get; set; }
+    public double Solde { get; set; }
+    public string TypeCompte { get; set; } = null!;
+    public int ClientID { get; set; }
+}
+
+public class CreateCompteDTO
+{
+    [Required(ErrorMessage = "Le numéro est obligatoire")]
+    public int NuméroCompte { get; set; }
+    [Range(0, double.MaxValue, ErrorMessage = "Le solde ne peut pas être négatif")]
+    public double Solde { get; set; }
+    [Required]
+    public string TypeCompte { get; set; } = null!;
+    [Required]
+    public int ClientID { get; set; }
+}`},
+    {title:"Écris une règle métier dans l'entité Compte",desc:"Méthode Retirer(double montant) : refuse un montant ≤ 0 et un solde insuffisant (InvalidOperationException), sinon retire le montant.",sol:R`public void Retirer(double montant)
+{
+    if (montant <= 0)
+        throw new InvalidOperationException("Le montant doit être positif.");
+    if (Solde < montant)
+        throw new InvalidOperationException("Solde insuffisant.");
+    Solde -= montant;
+}`}
+  ]
+},
+/* ---------------------------------------------------------------- 10 */
+{
+  title:"Synthèse complète du devoir",
+  pdf:"Chapitres 1 à 5 + TP6 + TP7",
+  intro:"Tout le programme sur une page : l'essentiel de chaque chapitre, un QCM final mélangé, du code à compléter et les questions de cours avec réponse modèle.",
+  cours:[
+    {t:'h',v:"L'essentiel de chaque chapitre"},
+    {t:'table',head:["Chapitre","À savoir pour le devoir"],rows:[
+      ["<b>Ch. 1</b> Concepts de base","ASP.NET Core : open source, multiplateforme, modulaire (NuGet), IoC intégré ; fichiers <code>.csproj</code>, <code>launchSettings.json</code>, <code>appsettings.json</code>, <code>Program.cs</code>, <code>wwwroot</code> ; middlewares dans l'ordre ; <code>ASPNETCORE_ENVIRONMENT</code>, <code>IsDevelopment()</code>"],
+      ["<b>Ch. 2</b> MVC","injection par constructeur ; <code>AddSingleton</code> / <code>AddScoped</code> / <code>AddTransient</code> ; contrôleur MVC hérite de <code>Controller</code> ; <code>IActionResult</code>, <code>ActionResult</code>"],
+      ["<b>Ch. 3</b> EF Core","ORM ; Code First / Database First (<code>Scaffold-DbContext</code>) ; providers ; <code>DbContext</code>, <code>DbContextOptions</code>, <code>DbSet</code> ; <code>AddDbContext</code> / <code>AddDbContextPool</code> ; conventions ; migrations (<code>Up/Down</code>, <code>Remove-Migration</code>, <code>Script-Migration</code>) ; annotations"],
+      ["<b>Ch. 4</b> Identity","<code>IdentityDbContext</code>, <code>AddIdentity&lt;IdentityUser, IdentityRole&gt;</code>, <code>UserManager</code>, <code>SignInManager</code>, <code>[Authorize]</code>, <code>[AllowAnonymous]</code>"],
+      ["<b>Ch. 5</b> API Web","REST : ressource + URI + verbe ; <code>ControllerBase</code> ; codes 200/201/204/400/401/404/500 ; <code>try/catch</code> + <code>StatusCode(500)</code> ; <code>CreatedAtAction</code> ; <code>ModelState.AddModelError</code> ; recherche avec <code>IQueryable</code>"],
+      ["<b>TP6</b>","classes + relations, <code>AppDbContext</code>, repository (13 méthodes LINQ async), <code>Program.cs</code>, migrations, contrôleur (13 actions) + erreurs du PDF"],
+      ["<b>TP7</b> Clean Architecture","4 couches (Domain, Application, Infrastructure, API) ; références vers le centre ; DTO ; service + <code>MapToDTO</code> ; règles métier ; <code>HasData</code> ; <code>AsNoTracking</code> ; <code>NoContent</code>"]]},
+    {t:'h',v:"Le chemin d'une requête, version simple (TP6) et version Clean Architecture (TP7)"},
+    {t:'flow',v:[["Controller","HTTP"],["Repository","LINQ"],["DbContext","EF Core"],["SQL Server","données"]]},
+    {t:'flow',v:[["Controller","API"],["Service","Application"],["Repository","Infrastructure"],["DbContext","Infrastructure"],["SQL Server","données"]]},
+    {t:'h',v:"Les commandes à connaître"},
+    {t:'table',head:["Commande","Rôle"],rows:[
+      ["<code>dotnet new webapi --use-controllers -n Nom</code>","créer une Web API"],
+      ["<code>Add-Migration Nom</code> / <code>Update-Database</code>","créer / appliquer une migration"],
+      ["<code>Remove-Migration</code>","supprimer la dernière migration non appliquée"],
+      ["<code>Update-Database NomMigration</code>","revenir à l'état après cette migration"],
+      ["<code>Script-Migration</code>","générer le script SQL"],
+      ["<code>Scaffold-DbContext \"chaîne\" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models</code>","Database First"]]},
+    {t:'h',v:"Les codes HTTP"},
+    {t:'table',head:["Code","Méthode","Exemple dans le TP6 / TP7"],rows:[
+      ["200","<code>Ok()</code>","GET d'un compte"],
+      ["201","<code>CreatedAtAction()</code>","création d'un compte"],
+      ["204","<code>NoContent()</code>","PUT et DELETE du TP7"],
+      ["400","<code>BadRequest()</code>","solde insuffisant, client inexistant"],
+      ["401","<code>Unauthorized()</code>","action <code>[Authorize]</code> sans connexion"],
+      ["404","<code>NotFound()</code>","compte introuvable"],
+      ["500","<code>StatusCode(StatusCodes.Status500InternalServerError, ...)</code>","base inaccessible (catch)"]]}
+  ],
+  qcm:[
+    {q:"<b>[Ch. 1]</b> Où configure-t-on les middlewares ?",o:["appsettings.json","Program.cs, après builder.Build()","launchSettings.json","Le contrôleur"],a:1,e:"Les services avant Build(), le pipeline après."},
+    {q:"<b>[Ch. 1]</b> Que vaut en général <code>ASPNETCORE_ENVIRONMENT</code> pendant le développement ?",o:["Production","Staging","Development","Debug"],a:2,e:"Testé par <code>IsDevelopment()</code>."},
+    {q:"<b>[Ch. 2]</b> Une instance par requête HTTP :",o:["AddSingleton","AddScoped","AddTransient","AddDbContextPool"],a:1,e:"Scoped."},
+    {q:"<b>[Ch. 2]</b> Un contrôleur MVC avec des vues hérite de…",o:["ControllerBase","Controller","DbContext","PageModel"],a:1,e:"Une Web API hérite de ControllerBase."},
+    {q:"<b>[Ch. 3]</b> Quelle commande pour Database First ?",o:["Add-Migration","Scaffold-DbContext","Update-Database","dotnet new"],a:1,e:"Reverse engineering à partir d'une base existante."},
+    {q:"<b>[Ch. 3]</b> Que fait <code>Remove-Migration</code> ?",o:["Supprime la base","Supprime la dernière migration si elle n'est pas appliquée","Annule toutes les migrations","Vide les tables"],a:1,e:"Sinon il faut d'abord Update-Database NomPrécédent."},
+    {q:"<b>[Ch. 3]</b> <code>[Compare(\"Email\")]</code> sert à…",o:["vérifier le format","vérifier l'égalité avec la propriété Email","rendre obligatoire","limiter la longueur"],a:1,e:"Ex. ConfirmEmail."},
+    {q:"<b>[Ch. 4]</b> Quelle classe gère la connexion d'un utilisateur ?",o:["UserManager","SignInManager","IdentityRole","DbContext"],a:1,e:"SignInAsync, SignOutAsync."},
+    {q:"<b>[Ch. 5]</b> Quel code pour une erreur de la base dans un catch ?",o:["400","404","500","201"],a:2,e:"StatusCode(StatusCodes.Status500InternalServerError, ...)."},
+    {q:"<b>[Ch. 5]</b> Que fait <code>ModelState.AddModelError</code> ?",o:["Supprime le modèle","Ajoute une erreur de validation personnalisée","Crée une migration","Renvoie 500"],a:1,e:"Suivi de return BadRequest(ModelState)."},
+    {q:"<b>[TP6]</b> Quelle est la bonne correction de <code>Task&lt;void&gt;</code> ?",o:["void","Task","Task&lt;null&gt;","async void"],a:1,e:"Task&lt;void&gt; n'existe pas en C#."},
+    {q:"<b>[TP6]</b> Pourquoi <code>[HttpPost(\"operation\")]</code> sur CreateOperation ?",o:["C'est plus joli","Deux [HttpPost] sans route entrent en conflit","Swagger l'exige","Pour la sécurité"],a:1,e:"Même verbe + même route = conflit."},
+    {q:"<b>[TP6]</b> <code>Nombre_op</code> reçoit…",o:["l'Id du compte","le NuméroCompte","l'Id du client","une date"],a:1,e:"D'où le chargement du compte avant, dans DeleteCompte."},
+    {q:"<b>[TP6]</b> Dans quelle classe est <code>ClientID</code> ?",o:["Client","Compte","Operation","AppDbContext"],a:1,e:"La clé étrangère est du côté « plusieurs »."},
+    {q:"<b>[TP7]</b> Où sont les interfaces des repositories ?",o:["Domain","Application","Infrastructure","API"],a:1,e:"Implémentations dans Infrastructure."},
+    {q:"<b>[TP7]</b> Le contrôleur reçoit…",o:["le DbContext","le repository","le service","l'entité"],a:2,e:"Controller → Service → Repository."},
+    {q:"<b>[TP7]</b> Quelle couche ne référence aucun projet ?",o:["API","Application","Infrastructure","Domain"],a:3,e:"Le cœur."},
+    {q:"<b>[Général]</b> Quel est le rôle de <code>SaveChangesAsync()</code> ?",o:["Lire les données","Enregistrer réellement les changements dans la base","Créer la base","Valider le modèle"],a:1,e:"Sans lui, Add/Remove/modifications ne sont pas écrits."},
+    {q:"<b>[Général]</b> Une annotation non respectée dans une Web API avec [ApiController] donne…",o:["200","400 automatique","500","rien"],a:1,e:"Validation automatique."},
+    {q:"<b>[Général]</b> Pourquoi injecter une <b>interface</b> plutôt qu'une classe ?",o:["C'est plus court","Faible couplage : on peut changer d'implémentation (base, tests)","Obligatoire en C#","Pour Swagger"],a:1,e:"Principe commun au TP6 (repository) et au TP7 (service)."}
+  ],
+  fills:[
+    {title:"Mélange : configuration (Ch. 1, 3, TP6)",desc:"",code:R`"ConnectionStrings": { "DbConnection": "server=(localdb)⟦\\⟧MSSQLLocalDB;database=bd;Trusted_Connection=true" }
+
+builder.Services.⟦AddDbContext⟧<AppDbContext>(o => o.⟦UseSqlServer⟧(builder.Configuration.GetConnectionString("DbConnection")));
+builder.Services.⟦AddScoped⟧<ICompteRepository, CompteRepository>();
+var app = builder.⟦Build⟧();`},
+    {title:"Mélange : repository LINQ (TP6)",desc:"",code:R`public async Task<double> Total_Retraits(int ClientId)
+{
+    return ⟦await⟧ _context.Operations
+        .⟦Where⟧(o => o.Compte.ClientID == ClientId ⟦&&⟧ o.TypeOperation == "Retrait")
+        .⟦SumAsync⟧(o => o.Montant);
+}`},
+    {title:"Mélange : contrôleur pro (Ch. 5)",desc:"",code:R`[HttpPost]
+public async Task<ActionResult<Compte>> CreateCompte(Compte c)
+{
+    try
+    {
+        if (await _repository.GetByNumero(c.NuméroCompte) != null)
+        {
+            ModelState.⟦AddModelError⟧("NuméroCompte", "Numéro déjà utilisé");
+            return ⟦BadRequest⟧(ModelState);
+        }
+        var compte = await _repository.Add(c);
+        return ⟦CreatedAtAction⟧(nameof(GetCompte), new { id = compte.Id }, compte);
+    }
+    catch (Exception)
+    {
+        return ⟦StatusCode⟧(StatusCodes.Status500InternalServerError, "Erreur");
+    }
+}`},
+    {title:"Mélange : Clean Architecture (TP7)",desc:"",code:R`public class ProductController : ⟦ControllerBase⟧
+{
+    private readonly ⟦IProductService⟧ _service;
+    public ProductController(IProductService service) { _service = service; }
+
+    [HttpDelete("{id}")]
+    public async Task<IActionResult> Delete(int id)
+    {
+        await _service.DeleteProductAsync(id);
+        return ⟦NoContent⟧();
+    }
+}`}
+  ],
+  writes:[
+    {title:"Question de cours : qu'est-ce qu'un middleware ?",desc:"[Ch. 1]",sol:R`// Un middleware est un composant logiciel qui traite une requête ou une réponse HTTP,
+// avec un rôle précis (authentification, gestion des erreurs, fichiers statiques...).
+// Les middlewares forment un pipeline configuré dans Program.cs : chacun peut traiter
+// la requête puis la passer au suivant, ou s'arrêter. Ils s'exécutent dans l'ordre
+// où ils sont ajoutés (ex. UseHttpsRedirection, UseAuthentication, UseAuthorization).`},
+    {title:"Question de cours : expliquer l'injection de dépendances",desc:"[Ch. 1, 2]",sol:R`// Au lieu de créer ses dépendances avec new, une classe les reçoit dans son constructeur
+// (injection par constructeur). Le conteneur IoC intégré d'ASP.NET Core les fournit,
+// à condition qu'elles soient inscrites dans Program.cs :
+//   AddSingleton (une instance pour l'application), AddScoped (une par requête),
+//   AddTransient (une à chaque demande).
+// Avantage : faible couplage, code testable, implémentation remplaçable.`},
+    {title:"Question de cours : qu'est-ce qu'EF Core et une migration ?",desc:"[Ch. 3]",sol:R`// EF Core est un ORM (mapping objet/relationnel) : il traduit les classes et les requêtes
+// LINQ en tables et en SQL. Avec Code First, on écrit les classes puis on crée la base
+// par migrations :
+//   Add-Migration Nom  → génère une classe avec Up() (appliquer) et Down() (annuler)
+//                         et met à jour le ModelSnapshot
+//   Update-Database    → exécute Up() ; la table __EFMigrationsHistory garde la trace.`},
+    {title:"Question de cours : REST et les verbes HTTP",desc:"[Ch. 5]",sol:R`// Une API REST expose des ressources (Compte, Client...) à des URI.
+// La combinaison URI + verbe HTTP indique l'action :
+//   GET /api/Compte       → liste        GET /api/Compte/1    → un compte
+//   POST /api/Compte      → créer        PUT /api/Compte/1    → modifier tout
+//   PATCH /api/Compte/1   → modifier une partie   DELETE /api/Compte/1 → supprimer
+// La réponse contient un code de statut : 2xx succès, 4xx erreur client, 5xx erreur serveur.`},
+    {title:"Question de cours : pourquoi un repository ?",desc:"[Ch. 3, 5, TP6]",sol:R`// Le repository regroupe l'accès aux données derrière une interface (ICompteRepository).
+// Avantages : code propre et réutilisable, faible couplage (le contrôleur dépend de
+// l'interface), on peut changer de base (OracleRepository) en modifiant une ligne
+// dans Program.cs, et on peut le remplacer par un faux repository pour les tests.`},
+    {title:"Question de cours : Clean Architecture",desc:"[TP7] Définition, couches, avantages.",sol:R`// Philosophie de conception qui organise le code en couches indépendantes aux
+// responsabilités claires (séparation des préoccupations).
+// Couches : Domain (entités, règles métier) ; Application (DTO, interfaces, services) ;
+// Infrastructure (DbContext, repositories, services externes) ; Présentation (contrôleurs API).
+// Les dépendances vont vers le Domain.
+// Avantages : testabilité, maintenabilité, flexibilité, indépendance des frameworks,
+// meilleure qualité du code ; une panne ou un changement reste isolé.`},
+    {title:"Question de cours : à quoi sert un DTO ?",desc:"[TP7]",sol:R`// Un DTO (Data Transfer Object) transporte les données entre les couches et vers le client.
+// On n'expose pas directement l'entité : on contrôle ce qui entre et sort,
+// chaque usage a sa validation (CreateProductDTO sans Id, UpdateProductDTO avec Id),
+// et l'entité peut évoluer sans casser l'API. Le service convertit DTO ↔ entité (MapToDTO).`},
+    {title:"Code complet : un mini-CRUD Clean Architecture pour Client",desc:"Écris IClientService (GetAll, GetById, Add) et le contrôleur ClientController qui l'utilise.",sol:R`public interface IClientService
+{
+    Task<IEnumerable<ClientDTO>> GetAllClientsAsync();
+    Task<ClientDTO?> GetClientByIdAsync(int id);
+    Task<ClientDTO?> AddClientAsync(CreateClientDTO dto);
+}
+
+[Route("api/[controller]")]
+[ApiController]
+public class ClientController : ControllerBase
+{
+    private readonly IClientService _service;
+    public ClientController(IClientService service) { _service = service; }
+
+    [HttpGet]
+    public async Task<IEnumerable<ClientDTO>> Get() => await _service.GetAllClientsAsync();
+
+    [HttpGet("{id}")]
+    public async Task<ActionResult<ClientDTO>> Get(int id)
+    {
+        var client = await _service.GetClientByIdAsync(id);
+        if (client == null) return NotFound();
+        return Ok(client);
+    }
+
+    [HttpPost]
+    public async Task<IActionResult> Post(CreateClientDTO dto)
+        => Ok(await _service.AddClientAsync(dto));
+}`}
+  ]
+}
+];
+
+const MEMO = {
+  title:"Mémo du devoir",
+  intro:"Ce que le devoir peut te demander en plus du TP6 (chapitres 1 à 5 et TP7), les pièges, et une liste de contrôle.",
+  sections:[
+    {title:"🎯 Questions probables en plus du TP6", head:["Question possible","Où réviser","L'essentiel"], rows:[
+      ["Expliquer le rôle de Program.cs / d'un middleware","Leçon 1","services + pipeline ; middlewares dans l'ordre d'ajout"],
+      ["Singleton, Scoped ou Transient ?","Leçon 2","repository = <code>AddScoped</code> (le DbContext est Scoped)"],
+      ["Avantages du repository","Leçon 2","faible couplage, changer de base, tests unitaires"],
+      ["Code First ou Database First","Leçon 3","<code>Add-Migration</code> / <code>Scaffold-DbContext</code>"],
+      ["Écrire Update autrement","Leçon 4","charger + copier les propriétés, ou <code>Attach</code> + <code>EntityState.Modified</code>"],
+      ["Ajouter une propriété au modèle","Leçon 5","nouvelle migration + <code>Update-Database</code>"],
+      ["Annuler une migration appliquée","Leçon 5","<code>Update-Database NomPrécédent</code> puis <code>Remove-Migration</code>"],
+      ["Refuser un numéro de compte en double","Leçon 6","<code>ModelState.AddModelError</code> + <code>BadRequest(ModelState)</code>"],
+      ["Gérer les erreurs de la base","Leçon 7","<code>try/catch</code> + <code>StatusCode(500, ...)</code>"],
+      ["Recherche avec critères optionnels","Leçon 7","<code>IQueryable</code> + <code>Where</code> conditionnels + <code>ToListAsync</code>"],
+      ["Protéger une action","Leçon 8","<code>[Authorize]</code>, <code>[AllowAnonymous]</code>, <code>Roles = \"Admin\"</code>"],
+      ["Les 4 couches de la Clean Architecture","Leçon 9","Domain, Application, Infrastructure, API ; dépendances vers le Domain"],
+      ["Où mettre interfaces / implémentations","Leçon 9","interfaces dans Application, implémentations dans Infrastructure"],
+      ["Écrire un DTO et un service avec MapToDTO","Leçon 9","CreateDTO sans Id, UpdateDTO avec Id ; le contrôleur reçoit le service"],
+      ["Migration dans une solution multi-projets","Leçon 9","démarrage = API, projet par défaut de la console = Infrastructure"],
+      ["Révision express de tout le programme","Leçon 10","tableau par chapitre + QCM final + questions de cours"]]},
+    {title:"⚠️ Pièges fréquents", head:["Piège","Bonne réponse"], rows:[
+      ["<code>Find</code> pour chercher par NuméroCompte","<code>Find</code> = clé primaire seulement ; utiliser <code>FirstOrDefaultAsync</code>"],
+      ["<code>First()</code> sans résultat","lève une exception ; préférer <code>FirstOrDefault</code> + test <code>null</code>"],
+      ["Repository en <code>AddSingleton</code>","<code>AddScoped</code>"],
+      ["<code>Remove-Migration</code> sur une migration appliquée","revenir d'abord avec <code>Update-Database NomPrécédent</code>"],
+      ["Tester <code>ModelState.IsValid</code> dans une Web API","inutile avec <code>[ApiController]</code> (400 automatique)"],
+      ["Contrôleur API qui hérite de <code>Controller</code>","<code>ControllerBase</code>"],
+      ["<code>UseAuthorization()</code> avant <code>UseAuthentication()</code>","Authentication d'abord"],
+      ["Mettre <code>ProductRepository</code> dans Application","Infrastructure (il utilise EF Core)"],
+      ["Le contrôleur Clean Architecture reçoit le repository","il reçoit le <b>service</b> (<code>IProductService</code>)"],
+      ["Migration TP7 avec le projet API comme projet par défaut de la console","choisir <b>Infrastructure</b> (il contient le DbContext)"],
+      ["Exposer l'entité directement en Clean Architecture","passer par des DTO"]]}
+  ],
+  checklist:[
+    "Je sais expliquer Program.cs (services + middlewares) et appsettings.json",
+    "Je connais Singleton / Scoped / Transient et je sais pourquoi le repository est Scoped",
+    "Je sais citer 3 avantages du repository",
+    "Je sais expliquer Code First et Database First (Scaffold-DbContext)",
+    "Je sais écrire Update de deux façons différentes",
+    "Je sais annuler une migration déjà appliquée",
+    "Je sais écrire une validation métier avec ModelState.AddModelError",
+    "Je sais entourer une action d'un try/catch qui renvoie 500",
+    "Je sais écrire une recherche avec IQueryable et des critères optionnels",
+    "Je connais les codes 200, 201, 204, 400, 401, 404, 500 et leurs méthodes",
+    "Je sais nommer les 4 couches de la Clean Architecture et leur contenu",
+    "Je sais écrire un DTO, une interface de service et un service avec MapToDTO",
+    "Je connais les références entre les projets (API → Application + Infrastructure…)",
+    "J'ai fait le QCM final et les questions de cours de la leçon 10"
+  ]
+};
+
+/* =====================================================================
+   MOTEUR
+   ===================================================================== */
+const LS = 'devoir-tp6-revision-v1';
+let S = {};
+try { S = JSON.parse(localStorage.getItem(LS)) || {}; } catch (e) { S = {}; }
+S.q = S.q || {}; S.f = S.f || {}; S.w = S.w || {}; S.cl = S.cl || {};
+function save(){ try { localStorage.setItem(LS, JSON.stringify(S)); } catch (e) {} }
+
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+
+/* coloration syntaxique C# simple */
+const KW = new Set(('using namespace public private protected readonly class interface async await return var new if else get set null true false this base static void int double string bool decimal foreach for in is not out ref const nameof').split(' '));
+function hl(src){
+  const re = /(\/\/[^\n]*)|("(?:[^"\\\n]|\\.)*")|\b(\d+(?:\.\d+)?)\b|([A-Za-zÀ-ÿ_][\wÀ-ÿ]*)/g;
+  let out = '', last = 0, m;
+  while ((m = re.exec(src))) {
+    out += esc(src.slice(last, m.index));
+    if (m[1]) out += '<span class="k5">' + esc(m[1]) + '</span>';
+    else if (m[2]) out += '<span class="k4">' + esc(m[2]) + '</span>';
+    else if (m[3]) out += '<span class="k6">' + m[3] + '</span>';
+    else {
+      const w = m[4], nx = src[re.lastIndex];
+      if (KW.has(w)) out += '<span class="k1">' + w + '</span>';
+      else if (nx === '(') out += '<span class="k3">' + w + '</span>';
+      else if (/^[A-Z]/.test(w)) out += '<span class="k2">' + w + '</span>';
+      else out += w;
+    }
+    last = re.lastIndex;
+  }
+  return out + esc(src.slice(last));
+}
+
+const norm = s => s.replace(/\s+/g, '');
+
+function el(tag, cls, html){ const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
+
+function lessonTotals(i){
+  const L = LESSONS[i]; let ok = 0;
+  L.qcm.forEach((q, j) => { if (S.q[i+'-'+j] === q.a) ok++; });
+  L.fills.forEach((f, j) => { if (S.cl[i+'-'+j]) ok++; });
+  return { ok, tot: L.qcm.length + L.fills.length };
+}
+
+function updateScores(){
+  let ok = 0, tot = 0;
+  LESSONS.forEach((L, i) => {
+    const t = lessonTotals(i); ok += t.ok; tot += t.tot;
+    const sc = document.getElementById('sc' + i);
+    if (sc){ sc.textContent = t.ok + '/' + t.tot; sc.classList.toggle('full', t.ok === t.tot); }
+  });
+  const p = tot ? Math.round(ok / tot * 100) : 0;
+  document.getElementById('gbar').style.width = p + '%';
+  document.getElementById('glbl').textContent = 'Progression : ' + ok + ' / ' + tot + ' réussis (' + p + ' %)';
+}
+
+/* ---------- navigation ---------- */
+function buildSide(){
+  const side = document.getElementById('side');
+  LESSONS.forEach((L, i) => {
+    const b = el('button', '', '<span class="num">' + (i+1) + '</span><span class="tx">' + L.title + '</span><span class="sc" id="sc' + i + '"></span>');
+    b.onclick = () => show(i);
+    side.appendChild(b);
+  });
+  const m = el('button', '', '<span class="num">★</span><span class="tx">' + MEMO.title + '</span>');
+  m.onclick = () => show(LESSONS.length);
+  side.appendChild(m);
+}
+
+function show(i){
+  S.cur = i; save();
+  document.querySelectorAll('nav.side button').forEach((b, j) => b.classList.toggle('on', j === i));
+  document.querySelectorAll('.lesson').forEach((s, j) => s.style.display = j === i ? 'block' : 'none');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  history.replaceState(null, '', '#l' + (i+1));
+}
+
+/* ---------- rendu d'un bloc de cours ---------- */
+function renderBlock(b){
+  switch (b.t){
+    case 'h': return el('h3', '', b.v);
+    case 'p': return el('p', '', b.v);
+    case 'list': return el('ul', '', b.v.map(x => '<li>' + x + '</li>').join(''));
+    case 'note': return el('div', 'note ' + (b.kind === 'key' ? '' : b.kind), b.v);
+    case 'table': {
+      const d = el('div', 'tbl');
+      d.innerHTML = '<table><thead><tr>' + b.head.map(h => '<th>' + h + '</th>').join('') + '</tr></thead><tbody>' +
+        b.rows.map(r => '<tr>' + r.map(c => '<td>' + c + '</td>').join('') + '</tr>').join('') + '</tbody></table>';
+      return d;
+    }
+    case 'flow': {
+      const d = el('div', 'flow');
+      d.innerHTML = b.v.map(s => '<div class="st"><b>' + s[0] + '</b><span>' + s[1] + '</span></div>').join('<div class="ar">→</div>');
+      return d;
+    }
+    case 'code': {
+      const f = document.createDocumentFragment();
+      if (b.cap) f.appendChild(el('div', 'cap', b.cap));
+      const pre = el('pre', 'code'); pre.innerHTML = hl(b.v); f.appendChild(pre);
+      return f;
+    }
+  }
+}
+
+/* ---------- QCM ---------- */
+function renderQcm(i, j, q){
+  const id = i + '-' + j, box = el('div', 'q');
+  box.appendChild(el('div', 'qt', '<span class="n">' + (j+1) + '.</span>' + q.q));
+  const opts = el('div', 'opts'), ex = el('div', 'expl');
+  const btns = q.o.map((o, k) => {
+    const b = el('button', 'opt', '<span class="l">' + 'ABCD'[k] + '</span><span>' + o + '</span>');
+    b.onclick = () => answer(k);
+    opts.appendChild(b); return b;
+  });
+  function paint(k){
+    btns.forEach((b, x) => { b.disabled = true; if (x === q.a) b.classList.add('good'); else if (x === k) b.classList.add('wrong'); });
+    const ok = k === q.a;
+    ex.className = 'expl show ' + (ok ? 'ok' : 'ko');
+    ex.innerHTML = (ok ? '✅ <b>Bonne réponse.</b> ' : '❌ <b>Pas tout à fait.</b> ') + q.e;
+  }
+  function answer(k){ S.q[id] = k; save(); paint(k); updateScores(); }
+  box.appendChild(opts); box.appendChild(ex);
+  if (S.q[id] != null) paint(S.q[id]);
+  return box;
+}
+
+/* ---------- code à compléter ---------- */
+function renderFill(i, j, f){
+  const id = i + '-' + j, box = el('div', 'ex');
+  box.appendChild(el('h4', '', '🧩 ' + f.title));
+  if (f.desc) box.appendChild(el('p', 'd', f.desc));
+  const pre = el('pre', 'code'), inputs = [];
+  const parts = f.code.split(/⟦([^⟧]*)⟧/);
+  const saved = S.f[id] || [];
+  parts.forEach((p, k) => {
+    if (k % 2 === 0) { const s = document.createElement('span'); s.innerHTML = hl(p); pre.appendChild(s); }
+    else {
+      const ans = p.split('‖'), inp = document.createElement('input');
+      inp.className = 'blank'; inp.spellcheck = false; inp.autocomplete = 'off';
+      inp.size = Math.max(3, Math.max(...ans.map(a => a.length)) + 1);
+      inp.value = saved[inputs.length] || '';
+      inp.dataset.ans = JSON.stringify(ans);
+      inp.addEventListener('input', () => { inp.className = 'blank'; S.f[id] = inputs.map(x => x.value); save(); });
+      inp.addEventListener('keydown', e => { if (e.key === 'Enter') check(); });
+      inputs.push(inp); pre.appendChild(inp);
+    }
+  });
+  box.appendChild(pre);
+  const acts = el('div', 'acts'), res = el('span', 'res');
+  const bC = el('button', 'btn primary', 'Vérifier'), bS = el('button', 'btn', 'Voir la réponse'), bE = el('button', 'btn', 'Effacer');
+  function check(){
+    let good = 0;
+    inputs.forEach(x => {
+      const ok = JSON.parse(x.dataset.ans).some(a => norm(a) === norm(x.value));
+      x.className = 'blank ' + (ok ? 'ok' : 'ko'); if (ok) good++;
+    });
+    const all = good === inputs.length;
+    res.className = 'res ' + (all ? 'ok' : 'ko');
+    res.textContent = all ? '✅ Tout est juste !' : good + ' / ' + inputs.length + ' correct(s) — corrige les cases en rouge.';
+    if (all) S.cl[id] = true;
+    save(); updateScores();
+  }
+  bC.onclick = check;
+  bS.onclick = () => { inputs.forEach(x => { x.value = JSON.parse(x.dataset.ans)[0]; x.className = 'blank shown'; }); res.className = 'res'; res.textContent = 'Réponses affichées en jaune. Efface et réessaie sans regarder !'; S.f[id] = inputs.map(x => x.value); save(); };
+  bE.onclick = () => { inputs.forEach(x => { x.value = ''; x.className = 'blank'; }); res.textContent = ''; S.f[id] = []; delete S.cl[id]; save(); updateScores(); };
+  acts.append(bC, bS, bE, res); box.appendChild(acts);
+  if (S.cl[id]) { inputs.forEach(x => x.className = 'blank ok'); res.className = 'res ok'; res.textContent = '✅ Déjà réussi.'; }
+  return box;
+}
+
+/* ---------- écris le code ---------- */
+function renderWrite(i, j, w){
+  const id = i + '-' + j, box = el('div', 'ex');
+  box.appendChild(el('h4', '', '✍️ ' + w.title));
+  box.appendChild(el('p', 'd', w.desc));
+  const ta = el('textarea', 'w'); ta.spellcheck = false; ta.placeholder = '// écris ton code ici…';
+  ta.value = S.w[id] || '';
+  ta.addEventListener('input', () => { S.w[id] = ta.value; save(); });
+  ta.addEventListener('keydown', e => {
+    if (e.key === 'Tab') { e.preventDefault(); const s = ta.selectionStart; ta.value = ta.value.slice(0, s) + '    ' + ta.value.slice(ta.selectionEnd); ta.selectionStart = ta.selectionEnd = s + 4; S.w[id] = ta.value; save(); }
+  });
+  box.appendChild(ta);
+  const sol = el('div', 'sol'); sol.innerHTML = '<div class="cap">Correction</div><pre class="code">' + hl(w.sol) + '</pre>';
+  const acts = el('div', 'acts'), bS = el('button', 'btn primary', 'Voir la correction');
+  bS.onclick = () => { const on = sol.classList.toggle('show'); bS.textContent = on ? 'Cacher la correction' : 'Voir la correction'; };
+  acts.appendChild(bS); box.appendChild(acts); box.appendChild(sol);
+  return box;
+}
+
+/* ---------- une leçon ---------- */
+function renderLesson(i){
+  const L = LESSONS[i], wrap = el('div', 'lesson');
+  wrap.appendChild(el('div', 'hero', '<div class="k">Leçon ' + (i+1) + ' / ' + LESSONS.length + '</div><h1>' + L.title + '</h1><p>' + L.intro + '</p><span class="pdf">📚 Cours : ' + L.pdf + '</span>'));
+
+  const c = el('section', 'blk cours'); c.appendChild(el('h2', '', '📘 Cours'));
+  L.cours.forEach(b => c.appendChild(renderBlock(b))); wrap.appendChild(c);
+
+  const q = el('section', 'blk'); q.appendChild(el('h2', '', '❓ QCM <span class="tag">' + L.qcm.length + ' questions</span>'));
+  q.appendChild(el('p', 'd', 'Clique sur une réponse : la correction s\'affiche tout de suite.'));
+  L.qcm.forEach((x, j) => q.appendChild(renderQcm(i, j, x))); wrap.appendChild(q);
+
+  const f = el('section', 'blk'); f.appendChild(el('h2', '', '🧩 Code à compléter <span class="tag">' + L.fills.length + ' exercices</span>'));
+  f.appendChild(el('p', 'd', 'Tape dans les cases violettes, puis « Vérifier » (ou Entrée). Majuscules et symboles comptent, comme en C#.'));
+  L.fills.forEach((x, j) => f.appendChild(renderFill(i, j, x))); wrap.appendChild(f);
+
+  const w = el('section', 'blk'); w.appendChild(el('h2', '', '✍️ Écris le code <span class="tag">' + L.writes.length + ' exercice' + (L.writes.length > 1 ? 's' : '') + '</span>'));
+  w.appendChild(el('p', 'd', 'Écris le code toi-même sans regarder le cours, puis compare avec la correction. Ton texte est gardé dans le navigateur.'));
+  L.writes.forEach((x, j) => w.appendChild(renderWrite(i, j, x))); wrap.appendChild(w);
+
+  const pg = el('div', 'pager');
+  const bp = el('button', 'btn', '← Leçon précédente'), bn = el('button', 'btn primary', i === LESSONS.length - 1 ? MEMO.title + ' →' : 'Leçon suivante →');
+  if (i === 0) bp.style.visibility = 'hidden';
+  bp.onclick = () => show(i - 1); bn.onclick = () => show(i + 1);
+  pg.append(bp, bn); wrap.appendChild(pg);
+  return wrap;
+}
+
+function renderMemo(){
+  const wrap = el('div', 'lesson');
+  wrap.appendChild(el('div', 'hero', '<div class="k">Récapitulatif</div><h1>' + MEMO.title + '</h1><p>' + MEMO.intro + '</p>'));
+  MEMO.sections.forEach(sec => {
+    const s = el('section', 'blk cours'); s.appendChild(el('h2', '', sec.title));
+    s.appendChild(renderBlock({t:'table', head: sec.head, rows: sec.rows}));
+    wrap.appendChild(s);
+  });
+  const s3 = el('section', 'blk cours'); s3.appendChild(el('h2', '', '✅ Suis-je prête pour le devoir ?'));
+  const ul = el('div', '');
+  MEMO.checklist.forEach((t, k) => {
+    const id = 'ck' + k, lab = el('label', '', '');
+    lab.style.cssText = 'display:flex;gap:10px;align-items:flex-start;padding:7px 4px;border-bottom:1px solid var(--border);cursor:pointer';
+    const cb = document.createElement('input'); cb.type = 'checkbox'; cb.checked = !!S[id]; cb.style.marginTop = '5px';
+    cb.onchange = () => { S[id] = cb.checked; save(); };
+    lab.appendChild(cb); lab.appendChild(el('span', '', t)); ul.appendChild(lab);
+  });
+  s3.appendChild(ul); wrap.appendChild(s3);
+  const pg = el('div', 'pager'), bp = el('button', 'btn', '← Leçon ' + LESSONS.length);
+  bp.onclick = () => show(LESSONS.length - 1); pg.appendChild(bp); wrap.appendChild(pg);
+  return wrap;
+}
+
+/* ---------- démarrage ---------- */
+function applyTheme(){ if (S.theme) document.documentElement.setAttribute('data-theme', S.theme); else document.documentElement.removeAttribute('data-theme'); }
+document.getElementById('theme').onclick = () => {
+  const dark = S.theme ? S.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  S.theme = dark ? 'light' : 'dark'; applyTheme(); save();
+};
+document.getElementById('reset').onclick = () => {
+  if (!confirm('Effacer toutes tes réponses et recommencer ?')) return;
+  const t = S.theme; S = { q:{}, f:{}, w:{}, cl:{}, theme:t }; save(); location.reload();
+};
+
+applyTheme();
+buildSide();
+const main = document.getElementById('main');
+LESSONS.forEach((L, i) => main.appendChild(renderLesson(i)));
+main.appendChild(renderMemo());
+updateScores();
+const h = parseInt((location.hash.match(/#l(\d+)/) || [])[1], 10);
+show(h >= 1 && h <= LESSONS.length + 1 ? h - 1 : (S.cur || 0));
+</script>
+</body>
+</html>
