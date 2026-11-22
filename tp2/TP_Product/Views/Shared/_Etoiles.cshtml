@@ -1,0 +1,35 @@
+@model TP_Product.ViewModels.NoteProduit
+@* Affiche la note moyenne d'un produit avec des étoiles (pleines, demi, vides) *@
+@{
+    double moyenne = Model?.Moyenne ?? 0;
+    int nombre = Model?.Nombre ?? 0;
+}
+<div class="etoiles">
+    @if (nombre == 0)
+    {
+        @for (int i = 1; i <= 5; i++)
+        {
+            <i class="bi bi-star etoile-vide"></i>
+        }
+        <span class="etoiles-texte">Aucun avis</span>
+    }
+    else
+    {
+        @for (int i = 1; i <= 5; i++)
+        {
+            if (moyenne >= i)
+            {
+                <i class="bi bi-star-fill"></i>
+            }
+            else if (moyenne >= i - 0.5)
+            {
+                <i class="bi bi-star-half"></i>
+            }
+            else
+            {
+                <i class="bi bi-star etoile-vide"></i>
+            }
+        }
+        <span class="etoiles-texte">@moyenne.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture) (@nombre)</span>
+    }
+</div>

@@ -1,0 +1,304 @@
+@model TP_Product.ViewModels.DashboardViewModel
+@using System.Text.Json
+@{
+    ViewData["Title"] = "Tableau de bord";
+    int seuil = ViewBag.Seuil;
+    // La page des commandes est réservée à l'Admin
+    bool estAdmin = User.IsInRole("Admin");
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
+    <div>
+        <h2 class="fw-bold mb-0"><i class="bi bi-speedometer2"></i> Tableau de bord</h2>
+        <p class="text-muted mb-0">Vue d'ensemble de la boutique — @DateTime.Now.ToString("dd/MM/yyyy HH:mm")</p>
+    </div>
+    <div class="d-flex gap-2">
+        @if (estAdmin)
+        {
+            <a asp-controller="Commande" asp-action="Index" class="btn btn-outline-primary"><i class="bi bi-receipt"></i> Commandes</a>
+        }
+        <a asp-controller="Product" asp-action="Create" class="btn btn-primary"><i class="bi bi-plus-lg"></i> Nouvel article</a>
+    </div>
+</div>
+
+<!-- ===== Indicateurs (KPI) ===== -->
+<div class="row row-cols-2 row-cols-md-3 row-cols-xl-6 g-3 mb-4">
+    <div class="col">
+        <div class="card kpi-card h-100">
+            <div class="kpi-icon"><i class="bi bi-cash-stack"></i></div>
+            <div class="kpi-label">Chiffre d'affaires</div>
+            <div class="kpi-value">@Model.ChiffreAffaires.ToDT()</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card kpi-card h-100">
+            <div class="kpi-icon"><i class="bi bi-receipt"></i></div>
+            <div class="kpi-label">Commandes</div>
+            <div class="kpi-value">@Model.NbCommandes</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card kpi-card h-100">
+            <div class="kpi-icon"><i class="bi bi-basket"></i></div>
+            <div class="kpi-label">Panier moyen</div>
+            <div class="kpi-value">@Model.PanierMoyen.ToDT()</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card kpi-card h-100">
+            <div class="kpi-icon"><i class="bi bi-box-seam"></i></div>
+            <div class="kpi-label">Articles vendus</div>
+            <div class="kpi-value">@Model.NbArticlesVendus</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card kpi-card h-100">
+            <div class="kpi-icon"><i class="bi bi-people"></i></div>
+            <div class="kpi-label">Utilisateurs</div>
+            <div class="kpi-value">@Model.NbClients</div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="card kpi-card h-100">
+            <div class="kpi-icon"><i class="bi bi-grid"></i></div>
+            <div class="kpi-label">Produits</div>
+            <div class="kpi-value">@Model.NbProduits</div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Graphiques ===== -->
+<div class="row g-4 mb-4">
+    <div class="col-lg-8">
+        <div class="card form-card h-100">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-1">Ventes des 14 derniers jours</h5>
+                <p class="text-muted small mb-3">Montant total des commandes par jour (DT)</p>
+                <div class="chart-box"><canvas id="chartVentes" aria-label="Ventes des 14 derniers jours" role="img"></canvas></div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4">
+        <div class="card form-card h-100">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-1">Produits par catégorie</h5>
+                <p class="text-muted small mb-3">Nombre de produits dans chaque catégorie</p>
+                <div class="chart-box"><canvas id="chartCategories" aria-label="Produits par catégorie" role="img"></canvas></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-lg-6">
+        <div class="card form-card h-100">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-1">Top 5 des produits vendus</h5>
+                <p class="text-muted small mb-3">Quantité vendue</p>
+                @if (Model.TopProduits.Any())
+                {
+                    <div class="chart-box chart-box-sm"><canvas id="chartTop" aria-label="Top 5 des produits vendus" role="img"></canvas></div>
+                }
+                else
+                {
+                    <p class="text-muted text-center py-5 mb-0">Aucune vente pour le moment.</p>
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== Stock faible ===== -->
+    <div class="col-lg-6">
+        <div class="card form-card h-100">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-1">Stock faible</h5>
+                <p class="text-muted small mb-3">Produits avec @seuil unités ou moins</p>
+                @if (!Model.StockFaible.Any())
+                {
+                    <p class="text-center py-5 mb-0"><span class="stock-badge stock-in"><i class="bi bi-check-circle"></i> Tous les stocks sont suffisants</span></p>
+                }
+                else
+                {
+                    <div class="table-responsive dashboard-scroll">
+                        <table class="table align-middle mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Produit</th>
+                                    <th>Catégorie</th>
+                                    <th>Stock</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var p in Model.StockFaible)
+                                {
+                                    <tr>
+                                        <td class="fw-semibold">@p.Name</td>
+                                        <td class="text-muted">@p.Category?.CategoryName</td>
+                                        <td>
+                                            @if (p.QteStock == 0)
+                                            {
+                                                <span class="stock-badge stock-out"><i class="bi bi-x-circle"></i> Rupture</span>
+                                            }
+                                            else
+                                            {
+                                                <span class="stock-badge stock-low"><i class="bi bi-exclamation-triangle"></i> @p.QteStock restant(s)</span>
+                                            }
+                                        </td>
+                                        <td class="text-end">
+                                            <a asp-controller="Product" asp-action="Edit" asp-route-id="@p.ProductId" class="btn btn-sm btn-outline-primary">
+                                                <i class="bi bi-pencil"></i> Réapprovisionner
+                                            </a>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== Dernières commandes ===== -->
+<div class="card form-card mb-4">
+    <div class="card-body p-4">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h5 class="fw-bold mb-0">Dernières commandes</h5>
+            @if (estAdmin)
+            {
+                <a asp-controller="Commande" asp-action="Index" class="small">Voir tout <i class="bi bi-arrow-right"></i></a>
+            }
+        </div>
+        @if (!Model.DernieresCommandes.Any())
+        {
+            <p class="text-muted text-center py-4 mb-0">Aucune commande pour le moment.</p>
+        }
+        else
+        {
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>N°</th>
+                            <th>Date</th>
+                            <th>Client</th>
+                            <th>Articles</th>
+                            <th>Montant</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var o in Model.DernieresCommandes)
+                        {
+                            <tr>
+                                <td class="fw-semibold">#@o.Id</td>
+                                <td>@o.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@o.CustomerName</td>
+                                <td>@o.Items.Sum(i => i.Quantity)</td>
+                                <td class="fw-semibold">@o.TotalAmount.ToDT()</td>
+                                <td class="text-end">
+                                    @if (estAdmin)
+                                    {
+                                        <a asp-controller="Commande" asp-action="Details" asp-route-id="@o.Id" class="btn btn-sm btn-outline-primary"><i class="bi bi-eye"></i></a>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+    <script>
+        // Données envoyées par le contrôleur (converties en JSON)
+        const ventesJours = @Html.Raw(JsonSerializer.Serialize(Model.VentesJours));
+        const ventesMontants = @Html.Raw(JsonSerializer.Serialize(Model.VentesMontants));
+        const categoriesNoms = @Html.Raw(JsonSerializer.Serialize(Model.CategoriesNoms));
+        const categoriesNb = @Html.Raw(JsonSerializer.Serialize(Model.CategoriesNbProduits));
+        const topNoms = @Html.Raw(JsonSerializer.Serialize(Model.TopProduits.Select(p => p.ProductName)));
+        const topQte = @Html.Raw(JsonSerializer.Serialize(Model.TopProduits.Select(p => p.Quantite)));
+
+        // Style commun : couleur de la boutique, grille discrète
+        const couleur = "#6366f1";
+        const couleurFond = "rgba(99, 102, 241, 0.12)";
+        Chart.defaults.font.family = "'Poppins', sans-serif";
+        Chart.defaults.color = "#64748b";
+        Chart.defaults.plugins.legend.display = false;   // une seule série : le titre suffit
+        const grille = { color: "#eef0f4" };
+        const enDT = v => Number(v).toFixed(3) + " DT";
+
+        // 1) Ventes des 14 derniers jours (courbe)
+        new Chart(document.getElementById("chartVentes"), {
+            type: "line",
+            data: {
+                labels: ventesJours,
+                datasets: [{
+                    label: "Ventes",
+                    data: ventesMontants,
+                    borderColor: couleur,
+                    backgroundColor: couleurFond,
+                    borderWidth: 2,
+                    fill: true,
+                    tension: 0.3,
+                    pointRadius: 4,
+                    pointHoverRadius: 6,
+                    pointBackgroundColor: couleur
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                interaction: { mode: "index", intersect: false },
+                plugins: { tooltip: { callbacks: { label: c => " " + enDT(c.parsed.y) } } },
+                scales: {
+                    x: { grid: { display: false } },
+                    y: { beginAtZero: true, grid: grille, ticks: { callback: v => v + " DT" } }
+                }
+            }
+        });
+
+        // 2) Produits par catégorie (barres horizontales)
+        new Chart(document.getElementById("chartCategories"), {
+            type: "bar",
+            data: {
+                labels: categoriesNoms,
+                datasets: [{ label: "Produits", data: categoriesNb, backgroundColor: couleur, borderRadius: 4, maxBarThickness: 22 }]
+            },
+            options: {
+                indexAxis: "y",
+                maintainAspectRatio: false,
+                plugins: { tooltip: { callbacks: { label: c => " " + c.parsed.x + " produit(s)" } } },
+                scales: {
+                    x: { beginAtZero: true, grid: grille, ticks: { precision: 0 } },
+                    y: { grid: { display: false } }
+                }
+            }
+        });
+
+        // 3) Top 5 des produits vendus (barres horizontales)
+        const canvasTop = document.getElementById("chartTop");
+        if (canvasTop) {
+            new Chart(canvasTop, {
+                type: "bar",
+                data: {
+                    labels: topNoms,
+                    datasets: [{ label: "Quantité vendue", data: topQte, backgroundColor: couleur, borderRadius: 4, maxBarThickness: 22 }]
+                },
+                options: {
+                    indexAxis: "y",
+                    maintainAspectRatio: false,
+                    plugins: { tooltip: { callbacks: { label: c => " " + c.parsed.x + " vendu(s)" } } },
+                    scales: {
+                        x: { beginAtZero: true, grid: grille, ticks: { precision: 0 } },
+                        y: { grid: { display: false } }
+                    }
+                }
+            });
+        }
+    </script>
+}

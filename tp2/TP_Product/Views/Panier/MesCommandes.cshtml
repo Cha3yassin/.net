@@ -1,0 +1,38 @@
+@model IEnumerable<TP_Product.Models.Order>
+@{
+    ViewData["Title"] = "Mes commandes";
+}
+<h2 class="fw-bold mb-4"><i class="bi bi-bag-check"></i> Mes commandes</h2>
+
+@if (!Model.Any())
+{
+    <div class="text-center mt-5">
+        <i class="bi bi-receipt" style="font-size:4rem;color:var(--brand-1);"></i>
+        <h4 class="mt-3 text-muted">Vous n'avez encore passé aucune commande.</h4>
+        <a asp-controller="Product" asp-action="Index" class="btn btn-primary mt-3">Voir les produits</a>
+    </div>
+}
+else
+{
+    <div class="accordion" id="commandes">
+        @foreach (var o in Model)
+        {
+            <div class="card form-card mb-3">
+                <div class="card-body p-0">
+                    <button class="order-header collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#cmd-@o.Id">
+                        <span class="fw-bold">Commande #@o.Id</span>
+                        <span class="text-muted"><i class="bi bi-calendar3"></i> @o.OrderDate.ToString("dd/MM/yyyy HH:mm")</span>
+                        <span class="text-muted"><i class="bi bi-box"></i> @o.Items.Sum(i => i.Quantity) article(s)</span>
+                        <span class="product-price fs-6">@o.TotalAmount.ToDT()</span>
+                        <i class="bi bi-chevron-down"></i>
+                    </button>
+                    <div id="cmd-@o.Id" class="collapse" data-bs-parent="#commandes">
+                        <div class="p-3 pt-0">
+                            <partial name="_DetailsCommande" model="o" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
