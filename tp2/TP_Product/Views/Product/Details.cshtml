@@ -1,0 +1,226 @@
+@model TP_Product.Models.Product
+@{
+    ViewData["Title"] = Model.Name;
+    var photoPath = "~/images/" + (Model.Image ?? "noimage.jpg");
+    var similaires = ViewBag.Similaires as List<TP_Product.Models.Product>;
+    bool enStock = Model.QteStock > 0;
+    // Notes moyennes des produits (étoiles)
+    var notes = ViewBag.Notes as Dictionary<int, NoteProduit> ?? new Dictionary<int, NoteProduit>();
+    // Avis de ce produit
+    var noteProduit = ViewBag.Note as NoteProduit ?? new NoteProduit();
+    var listeAvis = ViewBag.Avis as IList<Avis> ?? new List<Avis>();
+    bool peutNoter = ViewBag.PeutNoter;
+    var monAvis = ViewBag.MonAvis as Avis;
+    string monId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+}
+
+<!-- Fil d'Ariane -->
+<nav aria-label="breadcrumb" class="mb-3">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index">Accueil</a></li>
+        <li class="breadcrumb-item"><a asp-action="Index" asp-route-categoryId="@Model.CategoryId">@Model.Category?.CategoryName</a></li>
+        <li class="breadcrumb-item active">@Model.Name</li>
+    </ol>
+</nav>
+
+<div class="card form-card mb-5">
+    <div class="card-body p-4 p-lg-5">
+        <div class="row g-5 align-items-center">
+            <!-- Grande image -->
+            <div class="col-md-6">
+                <div class="details-img">
+                    <img src="@photoPath" asp-append-version="true" alt="@Model.Name" />
+                </div>
+            </div>
+
+            <!-- Informations -->
+            <div class="col-md-6">
+                <span class="category-pill"><i class="bi bi-tag"></i> @Model.Category?.CategoryName</span>
+                <h1 class="fw-bold mt-3">@Model.Name</h1>
+                <a href="#avis" class="text-decoration-none"><partial name="_Etoiles" model="noteProduit" /></a>
+                <div class="details-price my-3">@Model.Price.ToDT()</div>
+
+                @if (enStock)
+                {
+                    <p><span class="stock-badge stock-in"><i class="bi bi-check-circle"></i> En stock : @Model.QteStock unité(s) disponible(s)</span></p>
+                }
+                else
+                {
+                    <p><span class="stock-badge stock-out"><i class="bi bi-x-circle"></i> Rupture de stock</span></p>
+                }
+
+                <ul class="list-unstyled text-muted my-4 details-features">
+                    <li><i class="bi bi-truck"></i> Livraison rapide</li>
+                    <li><i class="bi bi-shield-check"></i> Paiement sécurisé</li>
+                    <li><i class="bi bi-arrow-repeat"></i> Retour gratuit sous 14 jours</li>
+                </ul>
+
+                <!-- Bouton désactivé si le produit est indisponible -->
+                @if (enStock)
+                {
+                    <a asp-controller="Panier" asp-action="AddProduct" asp-route-id="@Model.ProductId" class="btn btn-primary btn-lg px-5">
+                        <i class="bi bi-cart-plus"></i> Ajouter au panier
+                    </a>
+                }
+                else
+                {
+                    <button class="btn btn-secondary btn-lg px-5" disabled>
+                        <i class="bi bi-cart-x"></i> Indisponible
+                    </button>
+                }
+
+                @if (User.IsInRole("Admin") || User.IsInRole("Manager"))
+                {
+                    <div class="mt-4 pt-3 border-top d-flex gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.ProductId" class="btn btn-outline-primary btn-sm"><i class="bi bi-pencil"></i> Modifier</a>
+                        <a asp-action="Delete" asp-route-id="@Model.ProductId" class="btn btn-outline-danger btn-sm"><i class="bi bi-trash"></i> Supprimer</a>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Produits similaires -->
+@if (similaires != null && similaires.Any())
+{
+    <div class="section-title">
+        <h2>Produits similaires</h2>
+        <p>Dans la même catégorie : @Model.Category?.CategoryName</p>
+    </div>
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-4 g-4">
+        @foreach (var product in similaires)
+        {
+            var path = "~/images/" + (product.Image ?? "noimage.jpg");
+            <div class="col">
+                <div class="card product-card h-100">
+                    <div class="product-img-wrap">
+                        <img class="card-img-top" src="@path" asp-append-version="true" alt="@product.Name" />
+                    </div>
+                    <div class="card-body d-flex flex-column p-4">
+                        <h5 class="card-title fw-semibold">@product.Name</h5>
+                        <partial name="_Etoiles" model="@(notes.GetValueOrDefault(product.ProductId) ?? new NoteProduit())" />
+                        <div class="product-price mb-3">@product.Price.ToDT()</div>
+                        <a asp-action="Details" asp-route-id="@product.ProductId" class="btn btn-outline-primary mt-auto">
+                            <i class="bi bi-eye"></i> Voir
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+
+<!-- ===== Avis des clients ===== -->
+<section id="avis" class="mt-5">
+    <div class="section-title">
+        <h2>Avis des clients</h2>
+        <p>Ce que pensent nos clients de ce produit</p>
+    </div>
+    <div class="row g-4">
+        <!-- Résumé + formulaire -->
+        <div class="col-lg-4">
+            <div class="card form-card mb-4">
+                <div class="card-body p-4 text-center">
+                    <div class="note-grande">@noteProduit.Moyenne.ToString("0.0", System.Globalization.CultureInfo.InvariantCulture)</div>
+                    <partial name="_Etoiles" model="noteProduit" />
+                    <p class="text-muted small mt-1 mb-3">@noteProduit.Nombre avis</p>
+                    <!-- Répartition des notes (5 étoiles -> 1 étoile) -->
+                    @for (int n = 5; n >= 1; n--)
+                    {
+                        int nb = listeAvis.Count(a => a.Note == n);
+                        int pourcent = listeAvis.Count == 0 ? 0 : nb * 100 / listeAvis.Count;
+                        <div class="d-flex align-items-center gap-2 small mb-1">
+                            <span class="text-nowrap">@n <i class="bi bi-star-fill text-warning"></i></span>
+                            <div class="progress flex-grow-1 barre-note"><div class="progress-bar" style="width:@pourcent%"></div></div>
+                            <span class="text-muted barre-nb">@nb</span>
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="card form-card">
+                <div class="card-body p-4">
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <p class="mb-0 text-muted">
+                            <i class="bi bi-info-circle"></i>
+                            <a asp-controller="Account" asp-action="Login" asp-route-returnUrl="@Context.Request.Path">Connectez-vous</a> pour laisser un avis.
+                        </p>
+                    }
+                    else if (!peutNoter)
+                    {
+                        <p class="mb-0 text-muted">
+                            <i class="bi bi-lock"></i>
+                            Seuls les clients ayant acheté ce produit peuvent laisser un avis.
+                        </p>
+                    }
+                    else
+                    {
+                        <h5 class="fw-bold mb-3">@(monAvis == null ? "Donner mon avis" : "Modifier mon avis")</h5>
+                        <form asp-controller="Avis" asp-action="Ajouter" method="post">
+                            <input type="hidden" name="ProductId" value="@Model.ProductId" />
+                            <!-- Choix de la note : 5 boutons radio affichés comme des étoiles -->
+                            <div class="choix-etoiles mb-3">
+                                @for (int n = 5; n >= 1; n--)
+                                {
+                                    <input type="radio" id="note-@n" name="Note" value="@n" checked="@(monAvis != null && monAvis.Note == n)" required />
+                                    <label for="note-@n" title="@n étoile(s)"><i class="bi bi-star-fill"></i></label>
+                                }
+                            </div>
+                            <textarea name="Commentaire" class="form-control mb-3" rows="4" maxlength="500"
+                                      placeholder="Votre commentaire (facultatif)">@monAvis?.Commentaire</textarea>
+                            <button type="submit" class="btn btn-primary w-100">
+                                <i class="bi bi-send"></i> @(monAvis == null ? "Publier mon avis" : "Modifier mon avis")
+                            </button>
+                        </form>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Liste des avis -->
+        <div class="col-lg-8">
+            @if (!listeAvis.Any())
+            {
+                <div class="card form-card">
+                    <div class="card-body p-5 text-center text-muted">
+                        <i class="bi bi-chat-square-text" style="font-size:2.5rem;"></i>
+                        <p class="mt-2 mb-0">Aucun avis pour le moment. Soyez le premier !</p>
+                    </div>
+                </div>
+            }
+            @foreach (var a in listeAvis)
+            {
+                <div class="card form-card mb-3">
+                    <div class="card-body p-4">
+                        <div class="d-flex justify-content-between align-items-start gap-2 flex-wrap">
+                            <div class="d-flex align-items-center gap-3">
+                                <span class="avatar">@(string.IsNullOrEmpty(a.User?.UserName) ? "?" : a.User.UserName.Substring(0, 1).ToUpper())</span>
+                                <div>
+                                    <div class="fw-semibold">@a.User?.UserName</div>
+                                    <small class="text-muted">@a.DateAvis.ToString("dd/MM/yyyy à HH:mm")</small>
+                                </div>
+                            </div>
+                            <div class="d-flex align-items-center gap-2">
+                                <partial name="_Etoiles" model="@(new NoteProduit { Moyenne = a.Note, Nombre = 1 })" />
+                                @if (a.UserId == monId || User.IsInRole("Admin"))
+                                {
+                                    <form asp-controller="Avis" asp-action="Supprimer" asp-route-id="@a.AvisId" method="post"
+                                          onsubmit="return confirm('Supprimer cet avis ?');">
+                                        <button type="submit" class="btn btn-sm btn-outline-danger" title="Supprimer"><i class="bi bi-trash"></i></button>
+                                    </form>
+                                }
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrWhiteSpace(a.Commentaire))
+                        {
+                            <p class="mt-3 mb-0">@a.Commentaire</p>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</section>
